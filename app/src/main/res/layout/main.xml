@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:orientation="vertical"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent" 
+	android:id="@+id/layout">
+
+
+	<android.support.constraint.ConstraintLayout
+		android:id="@+id/relativeLayout3"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent">
+
+		<com.jjoe64.graphview.GraphView
+			android:id="@+id/graph"
+			android:layout_width="406dp"
+			android:layout_height="200dp"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintTop_toTopOf="parent" />
+
+
+		<SurfaceView
+			android:id="@+id/preview"
+			android:layout_width="204dp"
+			android:layout_height="142dp"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintHorizontal_bias="0.531"
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintTop_toBottomOf="@+id/graph" />
+
+		<TextView
+			android:id="@+id/text"
+			android:layout_width="218dp"
+			android:layout_height="95dp"
+			android:layout_marginTop="32dp"
+			android:gravity="center"
+			android:text="@string/default_text"
+			android:textSize="20sp"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintHorizontal_bias="0.497"
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintTop_toBottomOf="@+id/preview"></TextView>
+
+		<TextView
+			android:id="@+id/rollavg_text"
+			android:layout_width="283dp"
+			android:layout_height="54dp"
+			android:layout_marginStart="4dp"
+			android:text="TextView"
+			app:layout_constraintBottom_toTopOf="@+id/img_avg_text"
+			app:layout_constraintStart_toStartOf="parent" />
+
+		<TextView
+			android:id="@+id/img_avg_text"
+			android:layout_width="157dp"
+			android:layout_height="45dp"
+			android:text="TextView"
+			app:layout_constraintBottom_toBottomOf="parent"
+			app:layout_constraintStart_toStartOf="parent" />
+
+	</android.support.constraint.ConstraintLayout>
+
+	<LinearLayout
+		android:id="@+id/top"
+		android:layout_width="fill_parent"
+		android:layout_height="50dp"
+		android:orientation="horizontal"
+		android:paddingLeft="10dp"
+		android:paddingRight="10dp">
+
+	</LinearLayout>
+</LinearLayout>
