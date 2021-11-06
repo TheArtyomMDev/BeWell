@@ -1,31 +1,41 @@
 package com.example.sachin.heart
 
+import android.R.attr
 import android.app.Activity
 import android.os.Bundle
-import com.example.sachin.heart.R
 import android.view.SurfaceView
-import com.example.sachin.heart.HeartRateMonitor
 import android.view.SurfaceHolder
 import android.widget.TextView
 import android.os.PowerManager
-import android.annotation.SuppressLint
-import android.content.res.Configuration
 import android.hardware.Camera
 import android.os.PowerManager.WakeLock
-import com.example.sachin.heart.HeartRateMonitor.TYPE
 import android.hardware.Camera.PreviewCallback
+import android.os.Build
+import android.support.annotation.RequiresApi
 import android.util.Log
-import android.util.Log.DEBUG
 import android.view.View
 import android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
-import com.example.sachin.heart.BuildConfig.DEBUG
-import com.example.sachin.heart.ImageProcessing
 import java.lang.NullPointerException
 import java.util.concurrent.atomic.AtomicBoolean
 import com.jjoe64.graphview.series.LineGraphSeries
 
 import com.jjoe64.graphview.GraphView
 import com.jjoe64.graphview.series.DataPoint
+
+import android.R.attr.data
+import android.graphics.*
+import android.widget.ImageView
+
+import java.io.ByteArrayOutputStream
+import java.lang.Exception
+import android.graphics.BitmapFactory
+
+import android.graphics.ImageFormat
+
+import android.graphics.YuvImage
+
+
+
 
 
 /**
@@ -39,32 +49,160 @@ class HeartRateMonitor : Activity() {
         GREEN, RED
     }
 
+    //Данные об ударах сердца
+    object Beats {
+        var currentCount = 0
 
-    public override fun onCreate(savedInstanceState: Bundle?) {
+        var currentStartTime: Long = 0
+        var startTime: Long = 0
+        var endTime: Long = 0
+        var currentBeatTime: Long = 0
+        var lastBeatTime: Long = 0
+
+        var times: MutableList<DataPoint> = ArrayList()
+
+        fun addBeat() {
+            currentBeatTime = System.currentTimeMillis()
+            times.add(DataPoint((currentBeatTime - 1 - startTime.toDouble())/1000, 0.0))
+            times.add(DataPoint((currentBeatTime - startTime.toDouble())/1000, 1.0))
+            times.add(DataPoint((currentBeatTime + 1 - startTime.toDouble())/1000, 0.0))
+        }
+
+        fun startMonitor() {
+            startTime = System.currentTimeMillis()
+        }
+    }
+
+    //служебные переменные, котррые надо переработать
+    var averageIndex = 0
+    val averageArraySize = 4
+    val averageArray = IntArray(averageArraySize)
+    var beatsIndex = 0
+    val beatsArraySize = 3
+    val beatsArray = IntArray(beatsArraySize)
+    var current = TYPE.GREEN
+        private set
+
+    //переменные для интерфейса
+    val TAG = "HeartRateMonitor"
+    val processing = AtomicBoolean(false)
+    var IPreviewHolder: SurfaceHolder? = null
+    var camera: Camera? = null
+
+    var IBpmText: TextView? = null
+    var IRedLevelText: TextView? = null
+
+    var IGraph: GraphView? = null
+    var IBitmapImageFromCamera: ImageView? = null
+    var wakeLock: WakeLock? = null
+
+    val previewCallback = PreviewCallback { data, cam ->
+
+
+
+        if (false) {
+            var newType = TYPE.RED
+            if (newType != current) {
+
+                Beats.currentCount++
+                Log.d(TAG, "BEAT!! beats=" + Beats.currentCount)
+
+                Beats.addBeat()
+                Beats.lastBeatTime = Beats.currentBeatTime
+            }
+
+
+            val endTime = System.currentTimeMillis()
+            val totalTimeInSecs = (endTime - Beats.currentStartTime) / 1000.0
+            if (totalTimeInSecs >= 10) {
+                val bps = Beats.currentCount / totalTimeInSecs
+                val dpm = (bps * 60.0).toInt()
+
+                //очистить граф
+                IGraph!!.removeAllSeries()
+                //записать новые данные в граф
+                val series: LineGraphSeries<DataPoint> = LineGraphSeries(Beats.times.toTypedArray())
+                IGraph!!.addSeries(series)
+
+                val beatsAvg = (Beats.currentCount / totalTimeInSecs)
+                IBpmText!!.text = "$beatsAvg bpm"
+                Beats.currentStartTime = System.currentTimeMillis()
+                Beats.currentCount = 0
+            }
+            processing.set(false)
+        }
+    }
+    val surfaceCallback: SurfaceHolder.Callback = object : SurfaceHolder.Callback {
+        override fun surfaceCreated(holder: SurfaceHolder) {
+            try {
+                camera!!.setPreviewDisplay(IPreviewHolder)
+                camera!!.setPreviewCallback(previewCallback)
+            } catch (t: Throwable) {
+                Log.e("Preview-surfaceCallback", "Exception in setPreviewDisplay()", t)
+            }
+        }
+
+        @RequiresApi(Build.VERSION_CODES.ECLAIR)
+        override fun surfaceChanged(holder: SurfaceHolder, format: Int, width: Int, height: Int) {
+            val parameters = camera!!.parameters
+            parameters.flashMode = Camera.Parameters.FLASH_MODE_TORCH
+            val size = getSmallestPreviewSize(width, height, parameters)
+            if (size != null) {
+                parameters.setPreviewSize(size.width, size.height)
+                Log.d(TAG, "Using width=" + size.width + " height=" + size.height)
+            }
+            camera!!.parameters = parameters
+            camera!!.startPreview()
+        }
+
+        override fun surfaceDestroyed(holder: SurfaceHolder) {
+            // Ignore
+        }
+    }
+
+    fun getSmallestPreviewSize(width: Int, height: Int, parameters: Camera.Parameters): Camera.Size? {
+        var result: Camera.Size? = null
+        for (size in parameters.supportedPreviewSizes) {
+            if (size.width <= width && size.height <= height) {
+                if (result == null) {
+                    result = size
+                } else {
+                    val resultArea = result.width * result.height
+                    val newArea = size.width * size.height
+                    if (newArea < resultArea) result = size
+                }
+            }
+        }
+        return result
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.main)
 
         //инициализация переменных
         val preview = findViewById<View>(R.id.preview) as SurfaceView
-        previewHolder = preview.holder
-        previewHolder!!.addCallback(surfaceCallback)
-        text = findViewById(R.id.text)
-        imgavgtxt = findViewById(R.id.img_avg_text)
-        rollavgtxt = findViewById(R.id.rollavg_text)
-        graph = findViewById<View>(R.id.graph) as GraphView
+        IPreviewHolder = preview.holder
+        IPreviewHolder!!.addCallback(surfaceCallback)
+        IBpmText = findViewById(R.id.text)
+        IRedLevelText = findViewById(R.id.red_level_text)
+        IGraph = findViewById<View>(R.id.graph) as GraphView
+        IBitmapImageFromCamera = findViewById(R.id.bitmapImageFromCamera)
 
         //wakelock
         val pm = getSystemService(POWER_SERVICE) as PowerManager
         wakeLock = pm.newWakeLock(FLAG_KEEP_SCREEN_ON, "HearRate:mywakelock")
+
+        //стартуем монитор
+        Beats.startMonitor()
     }
 
     public override fun onResume() {
         super.onResume()
         wakeLock!!.acquire(10 * 60 * 1000L /*10 minutes*/)
         camera = Camera.open()
-        startTime = System.currentTimeMillis()
+        Beats.currentStartTime = System.currentTimeMillis()
     }
-
 
     public override fun onPause() {
         super.onPause()
@@ -75,182 +213,4 @@ class HeartRateMonitor : Activity() {
         camera = null
     }
 
-    companion object {
-        private const val TAG = "HeartRateMonitor"
-        private val processing = AtomicBoolean(false)
-        private var previewHolder: SurfaceHolder? = null
-        private var camera: Camera? = null
-
-        @SuppressLint("StaticFieldLeak")
-        private var text: TextView? = null
-
-        @SuppressLint("StaticFieldLeak")
-        private var imgavgtxt: TextView? = null
-        private var rollavgtxt: TextView? = null
-
-        private var graph: GraphView? = null
-        private var wakeLock: WakeLock? = null
-        private var averageIndex = 0
-        private const val averageArraySize = 4
-        private val averageArray = IntArray(averageArraySize)
-        var current = TYPE.GREEN
-            private set
-        private var beatsIndex = 0
-        private const val beatsArraySize = 3
-        private val beatsArray = IntArray(beatsArraySize)
-        private var beats = 0.0
-        private var startTime: Long = 0
-        private var beatsTime: MutableList<DataPoint> = ArrayList()
-        private var currentBeatTime: Long = 0
-        private var lastBeatTime: Long = 0
-        private val previewCallback = PreviewCallback { data, cam ->
-
-
-            if (data == null) throw NullPointerException()
-            val size = cam.parameters.previewSize ?: throw NullPointerException()
-            if (!processing.compareAndSet(false, true)) return@PreviewCallback
-            val width = size.width
-            val height = size.height
-            val imgAvg = ImageProcessing.decodeYUV420SPtoRedAvg(data.clone(), height, width)
-            // Log.i(TAG, "imgAvg="+imgAvg);
-            if (imgAvg == 0 || imgAvg == 255) {
-                processing.set(false)
-                return@PreviewCallback
-            }
-            var averageArrayAvg = 0
-            var averageArrayCnt = 0
-            for (i in averageArray.indices) {
-                if (averageArray[i] > 0) {
-                    averageArrayAvg += averageArray[i]
-                    averageArrayCnt++
-                }
-            }
-            val rollingAverage = if (averageArrayCnt > 0) averageArrayAvg / averageArrayCnt else 0
-            var newType = current
-            imgavgtxt!!.text = "image average:" + Integer.toString(imgAvg)
-            rollavgtxt!!.text = "rolling average:" + Integer.toString(rollingAverage)
-            if (imgAvg < rollingAverage) {
-                newType = TYPE.RED
-                if (newType != current) {
-
-                    beats++
-                    Log.d(TAG, "BEAT!! beats=" + beats)
-
-                    currentBeatTime = System.currentTimeMillis()
-
-                    beatsTime.add(DataPoint((currentBeatTime - startTime.toDouble())/1000, 1.0))
-                    beatsTime.add(DataPoint((currentBeatTime + 1 - startTime.toDouble())/1000, 0.0))
-                    lastBeatTime = currentBeatTime
-                }
-            } else if (imgAvg > rollingAverage) {
-                newType = TYPE.GREEN
-            }
-            if (averageIndex == averageArraySize) averageIndex = 0
-            averageArray[averageIndex] = imgAvg
-            averageIndex++
-
-            // Transitioned from one state to another to the same
-            if (newType != current) {
-                current = newType
-            }
-            val endTime = System.currentTimeMillis()
-            val totalTimeInSecs = (endTime - startTime) / 1000.0
-            if (totalTimeInSecs >= 10) {
-                val bps = beats / totalTimeInSecs
-                val dpm = (bps * 60.0).toInt()
-
-                //очистить граф
-                graph!!.removeAllSeries()
-
-                //записать новые данные в граф
-                val series: LineGraphSeries<DataPoint> = LineGraphSeries(beatsTime.toTypedArray())
-                graph!!.addSeries(series)
-
-                //распечатка времени ударов в лог
-                for (beatTime in beatsTime) {
-                    Log.d(TAG, beatTime.toString())
-                }
-                beatsTime.clear()
-
-                //если удары выходят за рамки разумного (<30 или >180)
-                if (dpm < 30 || dpm > 180) {
-                    startTime = System.currentTimeMillis()
-                    beats = 0.0
-                    processing.set(false)
-                    return@PreviewCallback
-                }
-
-                //среднее по всем измерениям ударов
-                // Log.d(TAG,
-                // "totalTimeInSecs="+totalTimeInSecs+" beats="+beats);
-                if (beatsIndex == beatsArraySize) beatsIndex = 0
-                beatsArray[beatsIndex] = dpm
-                beatsIndex++
-                var beatsArrayAvg = 0
-                var beatsArrayCnt = 0
-                for (i in beatsArray.indices) {
-                    if (beatsArray[i] > 0) {
-                        beatsArrayAvg += beatsArray[i]
-                        beatsArrayCnt++
-                    }
-                }
-                val beatsAvg = beatsArrayAvg / beatsArrayCnt
-                text!!.text = "$beatsAvg bpm"
-                startTime = System.currentTimeMillis()
-                beats = 0.0
-            }
-            processing.set(false)
-        }
-        private val surfaceCallback: SurfaceHolder.Callback = object : SurfaceHolder.Callback {
-            /**
-             * {@inheritDoc}
-             */
-            override fun surfaceCreated(holder: SurfaceHolder) {
-                try {
-                    camera!!.setPreviewDisplay(previewHolder)
-                    camera!!.setPreviewCallback(previewCallback)
-                } catch (t: Throwable) {
-                    Log.e("Preview-surfaceCallback", "Exception in setPreviewDisplay()", t)
-                }
-            }
-
-            /**
-             * {@inheritDoc}
-             */
-            override fun surfaceChanged(holder: SurfaceHolder, format: Int, width: Int, height: Int) {
-                val parameters = camera!!.parameters
-                parameters.flashMode = Camera.Parameters.FLASH_MODE_TORCH
-                val size = getSmallestPreviewSize(width, height, parameters)
-                if (size != null) {
-                    parameters.setPreviewSize(size.width, size.height)
-                    Log.d(TAG, "Using width=" + size.width + " height=" + size.height)
-                }
-                camera!!.parameters = parameters
-                camera!!.startPreview()
-            }
-
-            /**
-             * {@inheritDoc}
-             */
-            override fun surfaceDestroyed(holder: SurfaceHolder) {
-                // Ignore
-            }
-        }
-
-        private fun getSmallestPreviewSize(width: Int, height: Int, parameters: Camera.Parameters): Camera.Size? {
-            var result: Camera.Size? = null
-            for (size in parameters.supportedPreviewSizes) {
-                if (size.width <= width && size.height <= height) {
-                    if (result == null) {
-                        result = size
-                    } else {
-                        val resultArea = result.width * result.height
-                        val newArea = size.width * size.height
-                        if (newArea < resultArea) result = size
-                    }
-                }
-            }
-            return result
-        }
-    }
 }
