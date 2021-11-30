@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/heartrate.iml" filepath="$PROJECT_DIR$/.idea/modules/heartrate.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/heartrate.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/heartrate.app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/reverse/heartrate.reverse.iml" filepath="$PROJECT_DIR$/.idea/modules/reverse/heartrate.reverse.iml" />
     </modules>
   </component>
 </project>
