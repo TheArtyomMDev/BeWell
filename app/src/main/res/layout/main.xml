@@ -45,21 +45,21 @@
 			app:layout_constraintTop_toBottomOf="@+id/preview"></TextView>
 
 		<TextView
-			android:id="@+id/rollavg_text"
+			android:id="@+id/red_level_text"
 			android:layout_width="283dp"
 			android:layout_height="54dp"
 			android:layout_marginStart="4dp"
-			android:text="TextView"
-			app:layout_constraintBottom_toTopOf="@+id/img_avg_text"
-			app:layout_constraintStart_toStartOf="parent" />
-
-		<TextView
-			android:id="@+id/img_avg_text"
-			android:layout_width="157dp"
-			android:layout_height="45dp"
-			android:text="TextView"
+			android:text="RedLevel Appears Here"
 			app:layout_constraintBottom_toBottomOf="parent"
 			app:layout_constraintStart_toStartOf="parent" />
+
+		<ImageView
+			android:id="@+id/bitmapImageFromCamera"
+			android:layout_width="87dp"
+			android:layout_height="96dp"
+			app:layout_constraintBottom_toBottomOf="parent"
+			app:layout_constraintEnd_toEndOf="parent"
+			tools:srcCompat="@tools:sample/avatars" />
 
 	</android.support.constraint.ConstraintLayout>
 
