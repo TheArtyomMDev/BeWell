@@ -3,7 +3,10 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
-        <entry key="..\:/Users/artyo/AndroidStudioProjects/heartrate/app/src/main/res/layout/main.xml" value="0.25" />
+        <entry key="..\:/Users/artyo/AndroidStudioProjects/heartrate/app/src/main/res/drawable/camera.xml" value="0.1" />
+        <entry key="..\:/Users/artyo/AndroidStudioProjects/heartrate/app/src/main/res/drawable/progress_shadow.xml" value="0.11481481481481481" />
+        <entry key="..\:/Users/artyo/AndroidStudioProjects/heartrate/app/src/main/res/layout/activity_result.xml" value="0.22" />
+        <entry key="..\:/Users/artyo/AndroidStudioProjects/heartrate/app/src/main/res/layout/main.xml" value="0.33" />
         <entry key="..\:/Users/artyo/AndroidStudioProjects/heartrate/reverse/src/main/res/layout/activity_main.xml" value="0.2" />
       </map>
     </option>
