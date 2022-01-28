@@ -17,6 +17,7 @@
 			android:id="@+id/graph"
 			android:layout_width="406dp"
 			android:layout_height="200dp"
+			android:visibility="invisible"
 			app:layout_constraintEnd_toEndOf="parent"
 			app:layout_constraintStart_toStartOf="parent"
 			app:layout_constraintTop_toTopOf="parent" />
@@ -35,14 +36,14 @@
 			android:id="@+id/text"
 			android:layout_width="218dp"
 			android:layout_height="95dp"
-			android:layout_marginTop="32dp"
 			android:gravity="center"
 			android:text="@string/default_text"
 			android:textSize="20sp"
+			app:layout_constraintBottom_toBottomOf="parent"
 			app:layout_constraintEnd_toEndOf="parent"
-			app:layout_constraintHorizontal_bias="0.497"
+			app:layout_constraintHorizontal_bias="0.564"
 			app:layout_constraintStart_toStartOf="parent"
-			app:layout_constraintTop_toBottomOf="@+id/preview" />
+			app:layout_constraintTop_toBottomOf="@+id/imageView2" />
 
 		<TextView
 			android:id="@+id/red_level_text"
@@ -53,13 +54,29 @@
 			app:layout_constraintBottom_toBottomOf="parent"
 			app:layout_constraintStart_toStartOf="parent" />
 
+		<view
+			android:id="@+id/view2"
+			class="com.example.sachin.heart.HeartRateMonitor$CustomView"
+			android:layout_width="308dp"
+			android:layout_height="292dp"
+			app:layout_constraintBottom_toBottomOf="@+id/preview"
+			app:layout_constraintEnd_toEndOf="@+id/preview"
+			app:layout_constraintHorizontal_bias="0.52"
+			app:layout_constraintStart_toStartOf="@+id/preview"
+			app:layout_constraintTop_toTopOf="@+id/preview" />
+
 		<ImageView
-			android:id="@+id/bitmapImageFromCamera"
-			android:layout_width="87dp"
-			android:layout_height="96dp"
-			app:layout_constraintBottom_toBottomOf="parent"
+			android:id="@+id/imageView2"
+			android:layout_width="272dp"
+			android:layout_height="259dp"
+			android:layout_marginBottom="35dp"
+			android:src="@drawable/level_back"
+			android:visibility="invisible"
+			app:layout_constraintBottom_toBottomOf="@+id/view2"
 			app:layout_constraintEnd_toEndOf="parent"
-			tools:srcCompat="@tools:sample/avatars" />
+			app:layout_constraintHorizontal_bias="0.53"
+			app:layout_constraintStart_toStartOf="parent"
+			tools:visibility="invisible" />
 
 
 	</android.support.constraint.ConstraintLayout>

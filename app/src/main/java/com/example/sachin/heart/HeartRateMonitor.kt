@@ -1,39 +1,30 @@
 package com.example.sachin.heart
 
 import android.app.Activity
-import android.os.Bundle
-import com.example.sachin.heart.R
-import android.view.SurfaceView
-import com.example.sachin.heart.HeartRateMonitor
-import android.view.SurfaceHolder
-import android.widget.TextView
-import android.os.PowerManager
-import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
-import android.content.res.Configuration
+import android.graphics.*
 import android.hardware.Camera
-import android.os.PowerManager.WakeLock
-import com.example.sachin.heart.HeartRateMonitor.TYPE
 import android.hardware.Camera.PreviewCallback
+import android.os.Bundle
+import android.os.PowerManager
+import android.os.PowerManager.WakeLock
+import android.util.AttributeSet
 import android.util.Log
-import android.util.Log.DEBUG
+import android.view.SurfaceHolder
+import android.view.SurfaceView
 import android.view.View
 import android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
-import com.example.sachin.heart.BuildConfig.DEBUG
-import com.example.sachin.heart.ImageProcessing
-import java.lang.NullPointerException
-import java.util.concurrent.atomic.AtomicBoolean
-import com.jjoe64.graphview.series.LineGraphSeries
-
+import android.widget.TextView
 import com.jjoe64.graphview.GraphView
 import com.jjoe64.graphview.series.DataPoint
-import org.nield.kotlinstatistics.median
-import org.nield.kotlinstatistics.mode
+import com.jjoe64.graphview.series.LineGraphSeries
 import org.nield.kotlinstatistics.standardDeviation
-import kotlin.math.pow
+import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.math.roundToInt
-import kotlin.math.sqrt
-import kotlin.system.exitProcess
+import android.graphics.RectF
+import android.view.animation.AnimationUtils
+import java.util.Collections.rotate
 
 
 /**
@@ -47,7 +38,55 @@ class HeartRateMonitor : Activity() {
         GREEN, RED
     }
 
+    class CustomView @JvmOverloads constructor(context: Context,
+                                               attrs: AttributeSet? = null, defStyleAttr: Int = 0)
+        : View(context, attrs, defStyleAttr) {
 
+        var rotateAngle = 0F
+        var deltaAngle = 0.01F
+        var resizedWidth = 1000
+        var resizedHeight = 850
+
+        private var loadBitmap: Bitmap = BitmapFactory.decodeResource(resources, R.drawable.level_back)
+        private var resizedLoadBitmap: Bitmap = Bitmap.createScaledBitmap(loadBitmap, resizedWidth, resizedHeight, false)
+        private var rotator = Matrix()
+        private val paint = Paint()
+
+        // Called when the view should render its content.
+        override fun onDraw(canvas: Canvas?) {
+            super.onDraw(canvas)
+
+            val width = measuredWidth.toFloat()
+            val height = measuredHeight.toFloat()
+            val radius = (0.7*width/2).toFloat()
+            val xTranslate = 1F
+            val yTranslate = 1F
+
+
+            // rotate around (0,0)
+            //rotator.postRotate(rotateAngle, resizedWidth/2F, resizedHeight/2F)
+            // or, rotate around x,y
+            // NOTE: coords in bitmap-space!
+
+            //rotator.postRotate(90F, xRotate, yRotate);
+            // to set the position in canvas where the bitmap should be drawn to;
+            // NOTE: coords in canvas-space!
+
+            rotator.postTranslate(xTranslate, yTranslate);
+
+            paint.color = Color.WHITE
+            paint.style = Paint.Style.STROKE
+            paint.strokeWidth = 150F
+            canvas!!.drawCircle(width/2, height/2, radius, paint);
+
+            //canvas.drawBitmap(mBitmap, width/2-425, height/2-400, paint);
+            canvas.drawBitmap(resizedLoadBitmap, rotator, paint);
+
+            rotateAngle += deltaAngle
+            if(rotateAngle > 5.0F || rotateAngle < 0F) deltaAngle = -deltaAngle
+            invalidate()
+        }
+    }
 
 
     public override fun onCreate(savedInstanceState: Bundle?) {
@@ -61,8 +100,8 @@ class HeartRateMonitor : Activity() {
         text = findViewById(R.id.text)
         imgavgtxt = findViewById(R.id.red_level_text)
         graph = findViewById<View>(R.id.graph) as GraphView
+        var animationRotateCenter = AnimationUtils.loadAnimation(this, R.anim.rotation);
 
-        val intent = Intent(this, Result::class.java)
 
         //wakelock
         val pm = getSystemService(POWER_SERVICE) as PowerManager
@@ -156,7 +195,7 @@ class HeartRateMonitor : Activity() {
                 if (newType != current) {
 
                     beats++
-                    Log.d(TAG, "BEAT!! beats=" + beats)
+                    Log.d(TAG, "BEAT!! beats=$beats")
 
                     currentBeatTime = System.currentTimeMillis()
 
