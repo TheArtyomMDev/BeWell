@@ -44,13 +44,14 @@ class HeartRateMonitor : Activity() {
 
         var rotateAngle = 0F
         var deltaAngle = 0.01F
-        var resizedWidth = 1000
-        var resizedHeight = 850
+        var resizedWidth = 950
+        var resizedHeight = 750
 
         private var loadBitmap: Bitmap = BitmapFactory.decodeResource(resources, R.drawable.level_back)
         private var resizedLoadBitmap: Bitmap = Bitmap.createScaledBitmap(loadBitmap, resizedWidth, resizedHeight, false)
         private var rotator = Matrix()
         private val paint = Paint()
+        private var translated = false
 
         // Called when the view should render its content.
         override fun onDraw(canvas: Canvas?) {
@@ -58,25 +59,19 @@ class HeartRateMonitor : Activity() {
 
             val width = measuredWidth.toFloat()
             val height = measuredHeight.toFloat()
-            val radius = (0.7*width/2).toFloat()
-            val xTranslate = 1F
-            val yTranslate = 1F
+            val radius = (0.5*width/2).toFloat()
 
-
-            // rotate around (0,0)
-            //rotator.postRotate(rotateAngle, resizedWidth/2F, resizedHeight/2F)
-            // or, rotate around x,y
+            if(!translated) {
+                rotator.postTranslate(40F, 55F)
+                translated = true
+            }
+            rotator.postRotate(1F, resizedWidth/2F, resizedHeight/2F)
+            // rotate around x,y
             // NOTE: coords in bitmap-space!
-
-            //rotator.postRotate(90F, xRotate, yRotate);
-            // to set the position in canvas where the bitmap should be drawn to;
-            // NOTE: coords in canvas-space!
-
-            rotator.postTranslate(xTranslate, yTranslate);
 
             paint.color = Color.WHITE
             paint.style = Paint.Style.STROKE
-            paint.strokeWidth = 150F
+            paint.strokeWidth = 200F
             canvas!!.drawCircle(width/2, height/2, radius, paint);
 
             //canvas.drawBitmap(mBitmap, width/2-425, height/2-400, paint);

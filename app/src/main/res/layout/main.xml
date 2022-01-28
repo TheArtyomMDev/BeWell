@@ -42,8 +42,7 @@
 			app:layout_constraintBottom_toBottomOf="parent"
 			app:layout_constraintEnd_toEndOf="parent"
 			app:layout_constraintHorizontal_bias="0.564"
-			app:layout_constraintStart_toStartOf="parent"
-			app:layout_constraintTop_toBottomOf="@+id/imageView2" />
+			app:layout_constraintStart_toStartOf="parent" />
 
 		<TextView
 			android:id="@+id/red_level_text"
@@ -57,26 +56,13 @@
 		<view
 			android:id="@+id/view2"
 			class="com.example.sachin.heart.HeartRateMonitor$CustomView"
-			android:layout_width="308dp"
-			android:layout_height="292dp"
+			android:layout_width="371dp"
+			android:layout_height="371dp"
 			app:layout_constraintBottom_toBottomOf="@+id/preview"
 			app:layout_constraintEnd_toEndOf="@+id/preview"
 			app:layout_constraintHorizontal_bias="0.52"
 			app:layout_constraintStart_toStartOf="@+id/preview"
 			app:layout_constraintTop_toTopOf="@+id/preview" />
-
-		<ImageView
-			android:id="@+id/imageView2"
-			android:layout_width="272dp"
-			android:layout_height="259dp"
-			android:layout_marginBottom="35dp"
-			android:src="@drawable/level_back"
-			android:visibility="invisible"
-			app:layout_constraintBottom_toBottomOf="@+id/view2"
-			app:layout_constraintEnd_toEndOf="parent"
-			app:layout_constraintHorizontal_bias="0.53"
-			app:layout_constraintStart_toStartOf="parent"
-			tools:visibility="invisible" />
 
 
 	</android.support.constraint.ConstraintLayout>
