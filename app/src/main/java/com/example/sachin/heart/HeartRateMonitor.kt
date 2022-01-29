@@ -7,6 +7,7 @@ import android.graphics.*
 import android.hardware.Camera
 import android.hardware.Camera.PreviewCallback
 import android.os.Bundle
+import android.os.CountDownTimer
 import android.os.PowerManager
 import android.os.PowerManager.WakeLock
 import android.util.AttributeSet
@@ -15,27 +16,66 @@ import android.view.SurfaceHolder
 import android.view.SurfaceView
 import android.view.View
 import android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
+import android.widget.Button
 import android.widget.TextView
 import com.jjoe64.graphview.GraphView
 import com.jjoe64.graphview.series.DataPoint
-import com.jjoe64.graphview.series.LineGraphSeries
 import org.nield.kotlinstatistics.standardDeviation
 import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.math.roundToInt
-import android.graphics.RectF
-import android.view.animation.AnimationUtils
-import java.util.Collections.rotate
+import kotlin.system.exitProcess
 
 
-/**
- * This class extends Activity to handle a picture preview, process the preview
- * for a red values and determine a heart beat.
- *
- * @author Justin Wetherell <phishman3579></phishman3579>@gmail.com>
- */
 class HeartRateMonitor : Activity() {
     enum class TYPE {
         GREEN, RED
+    }
+    private val TAG = "HeartRateMonitor"
+    private val processing = AtomicBoolean(false)
+    private var previewHolder: SurfaceHolder? = null
+    private var camera: Camera? = null
+    private var text: TextView? = null
+    private var imgavgtxt: TextView? = null
+    private var timeText: TextView? = null
+    private var preview: SurfaceView? = null
+    private var cancelButton: Button? = null
+    private var graph: GraphView? = null
+    private var wakeLock: WakeLock? = null
+
+    var current = TYPE.GREEN
+        private set
+
+    private var averageIndex = 0
+    private val averageArraySize = 4
+    private var beatsIndex = 0
+    private val beatsArraySize = 3
+    private val beatsArray = IntArray(beatsArraySize)
+    private var beats = 0.0
+    private var startTime: Long = 0
+    private var generalStartTime: Long = 0
+    private var currentBeatTime: Long = 0
+    private var lastBeatTime: Long = 0
+
+    private val averageArray = IntArray(averageArraySize)
+    private var beatsTime: MutableList<DataPoint> = ArrayList()
+    private var generalBeatsTime: MutableList<Double> = ArrayList()
+    private var intervalsBeatsTime: MutableList<Double> = ArrayList()
+
+    private fun <T> modeOf(a: Array<T>): Pair<T, Int> {
+        val sortedByFreq = a.groupBy { it }.entries.sortedByDescending { it.value.size }
+        val maxFreq = sortedByFreq.first().value.size
+        val modes = sortedByFreq.takeWhile { it.value.size == maxFreq }
+        return Pair(modes.first().key, maxFreq)
+    }
+    private val timer = object: CountDownTimer(21000, 1000) {
+        override fun onTick(millisUntilFinished: Long) {
+            if((millisUntilFinished/1000).toInt() < 10) timeText!!.text = "${(millisUntilFinished/60000).toInt()}:0${(millisUntilFinished/1000).toInt()}"
+            else timeText!!.text = "${(millisUntilFinished/60000).toInt()}:${(millisUntilFinished/1000).toInt()}"
+        }
+
+        override fun onFinish() {
+
+        }
     }
 
     class CustomView @JvmOverloads constructor(context: Context,
@@ -43,12 +83,14 @@ class HeartRateMonitor : Activity() {
         : View(context, attrs, defStyleAttr) {
 
         var rotateAngle = 0F
-        var deltaAngle = 0.01F
-        var resizedWidth = 950
-        var resizedHeight = 750
+        var deltaAngle = 0.3F
+        var resizedWidth = 900
+        var resizedHeight = 900
 
-        private var loadBitmap: Bitmap = BitmapFactory.decodeResource(resources, R.drawable.level_back)
+        private var loadBitmap: Bitmap = BitmapFactory.decodeResource(resources, R.drawable.load)
         private var resizedLoadBitmap: Bitmap = Bitmap.createScaledBitmap(loadBitmap, resizedWidth, resizedHeight, false)
+        private var loadBitmapBackground: Bitmap = BitmapFactory.decodeResource(resources, R.drawable.load_background)
+        private var resizedLoadBitmapBackground: Bitmap = Bitmap.createScaledBitmap(loadBitmapBackground, resizedWidth, resizedHeight, false)
         private var rotator = Matrix()
         private val paint = Paint()
         private var translated = false
@@ -59,13 +101,14 @@ class HeartRateMonitor : Activity() {
 
             val width = measuredWidth.toFloat()
             val height = measuredHeight.toFloat()
-            val radius = (0.5*width/2).toFloat()
+            val radius = (0.6*width/2).toFloat()
 
             if(!translated) {
-                rotator.postTranslate(40F, 55F)
+                rotator.postTranslate(63F, 63F)
+                //rotator.postRotate(90F, resizedWidth/2F + 60.9F, resizedHeight/2F + 60.9F)
                 translated = true
             }
-            rotator.postRotate(1F, resizedWidth/2F, resizedHeight/2F)
+            rotator.postRotate(rotateAngle, resizedWidth/2F + 60.9F, resizedHeight/2F + 60.9F)
             // rotate around x,y
             // NOTE: coords in bitmap-space!
 
@@ -75,28 +118,34 @@ class HeartRateMonitor : Activity() {
             canvas!!.drawCircle(width/2, height/2, radius, paint);
 
             //canvas.drawBitmap(mBitmap, width/2-425, height/2-400, paint);
+            canvas.drawBitmap(resizedLoadBitmapBackground, width/2 - resizedWidth/2F, height/2 - resizedHeight/2F, paint)
             canvas.drawBitmap(resizedLoadBitmap, rotator, paint);
 
             rotateAngle += deltaAngle
-            if(rotateAngle > 5.0F || rotateAngle < 0F) deltaAngle = -deltaAngle
+            if(rotateAngle > 15.0F || rotateAngle < 0F) deltaAngle = -deltaAngle
             invalidate()
         }
     }
-
 
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.main)
 
         //инициализация переменных
-        val preview = findViewById<View>(R.id.preview) as SurfaceView
-        previewHolder = preview.holder
+        preview = findViewById<View>(R.id.preview) as SurfaceView
+        cancelButton = findViewById<Button>(R.id.cancel_button)
+        previewHolder = preview?.holder
         previewHolder!!.addCallback(surfaceCallback)
-        text = findViewById(R.id.text)
+        text = findViewById(R.id.result_info_text)
         imgavgtxt = findViewById(R.id.red_level_text)
         graph = findViewById<View>(R.id.graph) as GraphView
-        var animationRotateCenter = AnimationUtils.loadAnimation(this, R.anim.rotation);
+        timeText = findViewById(R.id.time_text)
 
+        timer.start()
+        cancelButton?.setOnClickListener {
+            moveTaskToBack(true);
+            exitProcess(-1)
+        }
 
         //wakelock
         val pm = getSystemService(POWER_SERVICE) as PowerManager
@@ -110,9 +159,6 @@ class HeartRateMonitor : Activity() {
         startTime = System.currentTimeMillis()
     }
 
-
-
-
     public override fun onPause() {
         super.onPause()
         wakeLock!!.release()
@@ -122,41 +168,7 @@ class HeartRateMonitor : Activity() {
         camera = null
     }
 
-    companion object {
-        private const val TAG = "HeartRateMonitor"
-        private val processing = AtomicBoolean(false)
-        private var previewHolder: SurfaceHolder? = null
-        private var camera: Camera? = null
-
-        private var text: TextView? = null
-        private var imgavgtxt: TextView? = null
-
-        private var graph: GraphView? = null
-        private var wakeLock: WakeLock? = null
-        private var averageIndex = 0
-        private const val averageArraySize = 4
-        private val averageArray = IntArray(averageArraySize)
-        var current = TYPE.GREEN
-            private set
-        private var beatsIndex = 0
-        private const val beatsArraySize = 3
-        private val beatsArray = IntArray(beatsArraySize)
-        private var beats = 0.0
-        private var startTime: Long = 0
-        private var generalStartTime: Long = 0
-        private var beatsTime: MutableList<DataPoint> = ArrayList()
-        private var generalBeatsTime: MutableList<Double> = ArrayList()
-        private var intervalsBeatsTime: MutableList<Double> = ArrayList()
-        private var currentBeatTime: Long = 0
-        private var lastBeatTime: Long = 0
-        private fun <T> modeOf(a: Array<T>): Pair<T, Int> {
-            val sortedByFreq = a.groupBy { it }.entries.sortedByDescending { it.value.size }
-            val maxFreq = sortedByFreq.first().value.size
-            val modes = sortedByFreq.takeWhile { it.value.size == maxFreq }
-            return Pair(modes.first().key, maxFreq)
-        }
-    }
-        val previewCallback = PreviewCallback { data, cam ->
+    val previewCallback = PreviewCallback { data, cam ->
 
             if (data == null) throw NullPointerException()
             val size = cam.parameters.previewSize ?: throw NullPointerException()
@@ -194,10 +206,6 @@ class HeartRateMonitor : Activity() {
 
                     currentBeatTime = System.currentTimeMillis()
 
-                    beatsTime.add(DataPoint((currentBeatTime - 100 - startTime.toDouble())/1000, 0.0))
-                    beatsTime.add(DataPoint((currentBeatTime - startTime.toDouble())/1000, 1.0))
-                    beatsTime.add(DataPoint((currentBeatTime + 100 - startTime.toDouble())/1000, 0.0))
-
                     generalBeatsTime.add((currentBeatTime - generalStartTime.toDouble())/1000)
 
                     lastBeatTime = currentBeatTime
@@ -220,12 +228,6 @@ class HeartRateMonitor : Activity() {
                 val bps = beats / totalTimeInSecs
                 val dpm = (bps * 60.0).toInt()
 
-                //очистить граф
-                graph!!.removeAllSeries()
-
-                //записать новые данные в граф
-                val series: LineGraphSeries<DataPoint> = LineGraphSeries(beatsTime.toTypedArray())
-                graph!!.addSeries(series)
                 beatsTime.clear()
 
                 //если удары выходят за рамки разумного (<30 или >180)
@@ -282,13 +284,16 @@ class HeartRateMonitor : Activity() {
 
                 val intent = Intent(this, Result::class.java)
                 intent.putExtra("BI", BI)
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
 
                 startActivity(intent)
+
+                this.finish()
             }
             processing.set(false)
         }
 
-        private val surfaceCallback: SurfaceHolder.Callback = object : SurfaceHolder.Callback {
+    private val surfaceCallback: SurfaceHolder.Callback = object : SurfaceHolder.Callback {
             /**
              * {@inheritDoc}
              */
@@ -324,7 +329,7 @@ class HeartRateMonitor : Activity() {
             }
         }
 
-        private fun getSmallestPreviewSize(width: Int, height: Int, parameters: Camera.Parameters): Camera.Size? {
+    private fun getSmallestPreviewSize(width: Int, height: Int, parameters: Camera.Parameters): Camera.Size? {
             var result: Camera.Size? = null
             for (size in parameters.supportedPreviewSizes) {
                 if (size.width <= width && size.height <= height) {

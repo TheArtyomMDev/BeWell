@@ -1,18 +1,85 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".Result">
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:id="@+id/layout2">
 
-    <TextView
-        android:id="@+id/BIText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="TextView"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-</android.support.constraint.ConstraintLayout>
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/relativeLayout2"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+
+        <TextView
+            android:id="@+id/result_info_text"
+            android:layout_width="128dp"
+            android:layout_height="66dp"
+            android:gravity="center"
+            android:text="Это хорошо"
+            android:textColor="#000000"
+            android:textSize="20sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/label_text" />
+
+        <Button
+            android:id="@+id/again_button"
+            android:layout_width="260dp"
+            android:layout_height="112dp"
+            android:layout_marginTop="172dp"
+            android:background="@drawable/again_button"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/canvas2"
+            tools:ignore="SpeakableTextPresentCheck" />
+
+        <TextView
+            android:id="@+id/label_text"
+            android:layout_width="321dp"
+            android:layout_height="35dp"
+            android:fontFamily="@font/montserrat_semi_bold"
+            android:gravity="center"
+            android:text="Ваш индекс напряжения"
+            android:textColor="#000000"
+            android:textSize="20sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/result_text" />
+
+        <TextView
+            android:id="@+id/result_text"
+            android:layout_width="300dp"
+            android:layout_height="180dp"
+            android:layout_marginTop="152dp"
+            android:fontFamily="@font/montserrat_semi_bold"
+            android:gravity="center"
+            android:textColor="#000000"
+            android:shadowColor="@color/text_shadow"
+            android:shadowDx="1"
+            android:shadowDy="5"
+            android:shadowRadius="10"
+            android:textSize="80sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.497"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <view
+            android:id="@+id/canvas2"
+            class="com.example.sachin.heart.Result$BarView2"
+            android:layout_width="371dp"
+            android:layout_height="371dp"
+            app:layout_constraintBottom_toBottomOf="@+id/result_text"
+            app:layout_constraintEnd_toEndOf="@+id/result_text"
+            app:layout_constraintHorizontal_bias="0.497"
+            app:layout_constraintStart_toStartOf="@+id/result_text"
+            app:layout_constraintTop_toTopOf="@+id/result_text"
+            app:layout_constraintVertical_bias="0.471" />
+
+
+    </android.support.constraint.ConstraintLayout>
+</LinearLayout>

@@ -5,11 +5,11 @@
 	android:orientation="vertical"
 	android:layout_width="fill_parent"
 	android:layout_height="fill_parent"
-	android:id="@+id/layout">
+	android:id="@+id/layout2">
 
 
 	<android.support.constraint.ConstraintLayout
-		android:id="@+id/relativeLayout3"
+		android:id="@+id/relativeLayout2"
 		android:layout_width="match_parent"
 		android:layout_height="match_parent">
 
@@ -27,22 +27,23 @@
 			android:id="@+id/preview"
 			android:layout_width="180dp"
 			android:layout_height="180dp"
+			android:layout_marginTop="152dp"
 			app:layout_constraintEnd_toEndOf="parent"
-			app:layout_constraintHorizontal_bias="0.531"
+			app:layout_constraintHorizontal_bias="0.497"
 			app:layout_constraintStart_toStartOf="parent"
-			app:layout_constraintTop_toBottomOf="@+id/graph" />
+			app:layout_constraintTop_toTopOf="parent" />
 
 		<TextView
-			android:id="@+id/text"
-			android:layout_width="218dp"
-			android:layout_height="95dp"
+			android:id="@+id/result_info_text"
+			android:layout_width="128dp"
+			android:layout_height="66dp"
 			android:gravity="center"
 			android:text="@string/default_text"
 			android:textSize="20sp"
+			android:visibility="invisible"
 			app:layout_constraintBottom_toBottomOf="parent"
 			app:layout_constraintEnd_toEndOf="parent"
-			app:layout_constraintHorizontal_bias="0.564"
-			app:layout_constraintStart_toStartOf="parent" />
+			tools:visibility="invisible" />
 
 		<TextView
 			android:id="@+id/red_level_text"
@@ -50,11 +51,13 @@
 			android:layout_height="54dp"
 			android:layout_marginStart="4dp"
 			android:text="RedLevel Appears Here"
+			android:visibility="invisible"
 			app:layout_constraintBottom_toBottomOf="parent"
-			app:layout_constraintStart_toStartOf="parent" />
+			app:layout_constraintStart_toStartOf="parent"
+			tools:visibility="invisible" />
 
 		<view
-			android:id="@+id/view2"
+			android:id="@+id/canvas"
 			class="com.example.sachin.heart.HeartRateMonitor$CustomView"
 			android:layout_width="371dp"
 			android:layout_height="371dp"
@@ -63,6 +66,60 @@
 			app:layout_constraintHorizontal_bias="0.52"
 			app:layout_constraintStart_toStartOf="@+id/preview"
 			app:layout_constraintTop_toTopOf="@+id/preview" />
+
+		<Button
+			android:id="@+id/cancel_button"
+			android:layout_width="260dp"
+			android:layout_height="112dp"
+			android:layout_marginTop="172dp"
+			android:background="@drawable/cancel_button"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintHorizontal_bias="0.463"
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintTop_toTopOf="@+id/info_text"
+			tools:ignore="SpeakableTextPresentCheck" />
+
+		<TextView
+			android:id="@+id/advise_text"
+			android:layout_width="321dp"
+			android:layout_height="35dp"
+			android:fontFamily="@font/montserrat_light"
+			android:gravity="center"
+			android:text="Положите палец на камеру"
+			android:textColor="#000000"
+			android:textSize="20sp"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintTop_toBottomOf="@+id/info_text" />
+
+		<TextView
+			android:id="@+id/time_text"
+			android:layout_width="249dp"
+			android:layout_height="100dp"
+			android:fontFamily="@font/montserrat_semi_bold"
+			android:gravity="center"
+			android:shadowColor="@color/text_shadow"
+			android:shadowDx="1"
+			android:shadowDy="5"
+			android:shadowRadius="10"
+			android:textColor="#000000"
+			android:textSize="80sp"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintTop_toBottomOf="@+id/advise_text" />
+
+		<TextView
+			android:id="@+id/info_text"
+			android:layout_width="321dp"
+			android:layout_height="35dp"
+			android:fontFamily="@font/montserrat_semi_bold"
+			android:gravity="center"
+			android:text="Идёт измерение"
+			android:textColor="#000000"
+			android:textSize="20sp"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintTop_toBottomOf="@+id/canvas" />
 
 
 	</android.support.constraint.ConstraintLayout>
