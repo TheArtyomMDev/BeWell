@@ -45,6 +45,7 @@ class HeartRateMonitor : Activity() {
     var current = TYPE.GREEN
         private set
 
+    private var measureTimeInSec = 100
     private var averageIndex = 0
     private val averageArraySize = 4
     private var beatsIndex = 0
@@ -67,10 +68,10 @@ class HeartRateMonitor : Activity() {
         val modes = sortedByFreq.takeWhile { it.value.size == maxFreq }
         return Pair(modes.first().key, maxFreq)
     }
-    private val timer = object: CountDownTimer(21000, 1000) {
+    private val timer = object: CountDownTimer(measureTimeInSec*1000L, 1000) {
         override fun onTick(millisUntilFinished: Long) {
-            if((millisUntilFinished/1000).toInt() < 10) timeText!!.text = "${(millisUntilFinished/60000).toInt()}:0${(millisUntilFinished/1000).toInt()}"
-            else timeText!!.text = "${(millisUntilFinished/60000).toInt()}:${(millisUntilFinished/1000).toInt()}"
+            if((millisUntilFinished/1000).toInt() < 10) timeText!!.text = "${(millisUntilFinished/60000).toInt()}:0${(millisUntilFinished/1000)%60}"
+            else timeText!!.text = "${(millisUntilFinished/60000).toInt()}:${(millisUntilFinished/1000)%60}"
         }
 
         override fun onFinish() {
@@ -257,7 +258,7 @@ class HeartRateMonitor : Activity() {
                 startTime = System.currentTimeMillis()
                 beats = 0.0
             }
-            if ((endTime - generalStartTime)/1000.0 > 20) {
+            if ((endTime - generalStartTime)/1000.0 > measureTimeInSec) {
                 for(i in 1 until generalBeatsTime.size) {
                     intervalsBeatsTime.add(((generalBeatsTime[i] - generalBeatsTime[i - 1]) * 100).roundToInt()/100.0)
                 }
