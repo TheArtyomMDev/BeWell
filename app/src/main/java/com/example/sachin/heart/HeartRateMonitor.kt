@@ -70,7 +70,7 @@ class HeartRateMonitor : Activity() {
     }
     private val timer = object: CountDownTimer(measureTimeInSec*1000L, 1000) {
         override fun onTick(millisUntilFinished: Long) {
-            if((millisUntilFinished/1000).toInt() < 10) timeText!!.text = "${(millisUntilFinished/60000).toInt()}:0${(millisUntilFinished/1000)%60}"
+            if((millisUntilFinished/1000).toInt()%60 < 10) timeText!!.text = "${(millisUntilFinished/60000).toInt()}:0${(millisUntilFinished/1000)%60}"
             else timeText!!.text = "${(millisUntilFinished/60000).toInt()}:${(millisUntilFinished/1000)%60}"
         }
 
