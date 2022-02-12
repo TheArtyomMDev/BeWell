@@ -1,4 +1,4 @@
-# Heart-rate-monitor-android
+# Android app that shows your HRV
 
 Based on at https://github.com/phishman3579/android-heart-rate-monitor
 
