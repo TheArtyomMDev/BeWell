@@ -1,8 +1,10 @@
 package com.example.sachin.heart
 
+import android.Manifest
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.*
 import android.hardware.Camera
 import android.hardware.Camera.PreviewCallback
@@ -10,6 +12,7 @@ import android.os.Bundle
 import android.os.CountDownTimer
 import android.os.PowerManager
 import android.os.PowerManager.WakeLock
+import androidx.core.content.ContextCompat
 import android.util.AttributeSet
 import android.util.Log
 import android.view.SurfaceHolder
@@ -22,7 +25,9 @@ import com.jjoe64.graphview.GraphView
 import com.jjoe64.graphview.series.DataPoint
 import org.nield.kotlinstatistics.standardDeviation
 import java.util.concurrent.atomic.AtomicBoolean
+import kotlin.math.pow
 import kotlin.math.roundToInt
+import kotlin.math.sqrt
 import kotlin.system.exitProcess
 
 
@@ -45,7 +50,7 @@ class HeartRateMonitor : Activity() {
     var current = TYPE.GREEN
         private set
 
-    private var measureTimeInSec = 100
+    private var measureTimeInSec = 20
     private var averageIndex = 0
     private val averageArraySize = 4
     private var beatsIndex = 0
@@ -68,9 +73,11 @@ class HeartRateMonitor : Activity() {
         val modes = sortedByFreq.takeWhile { it.value.size == maxFreq }
         return Pair(modes.first().key, maxFreq)
     }
+
     private val timer = object: CountDownTimer(measureTimeInSec*1000L, 1000) {
         override fun onTick(millisUntilFinished: Long) {
-            if((millisUntilFinished/1000).toInt()%60 < 10) timeText!!.text = "${(millisUntilFinished/60000).toInt()}:0${(millisUntilFinished/1000)%60}"
+            if((millisUntilFinished/1000).toInt()%60 < 10)
+                timeText!!.text = "${(millisUntilFinished/60000).toInt()}:0${(millisUntilFinished/1000)%60}"
             else timeText!!.text = "${(millisUntilFinished/60000).toInt()}:${(millisUntilFinished/1000)%60}"
         }
 
@@ -131,6 +138,12 @@ class HeartRateMonitor : Activity() {
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.main)
+
+        val permissionStatus = ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+        if (permissionStatus != PackageManager.PERMISSION_GRANTED) {
+            startActivity(Intent(this, AskToGivePermissions::class.java))
+            this.finish()
+        }
 
         //инициализация переменных
         preview = findViewById<View>(R.id.preview) as SurfaceView
@@ -259,37 +272,60 @@ class HeartRateMonitor : Activity() {
                 beats = 0.0
             }
             if ((endTime - generalStartTime)/1000.0 > measureTimeInSec) {
+
+                var toAdd: Double?
                 for(i in 1 until generalBeatsTime.size) {
-                    intervalsBeatsTime.add(((generalBeatsTime[i] - generalBeatsTime[i - 1]) * 100).roundToInt()/100.0)
+                    toAdd = ((generalBeatsTime[i] - generalBeatsTime[i - 1]) * 100).roundToInt()/100.0
+                    if(toAdd < 1.2 && toAdd > 0.6) intervalsBeatsTime.add(toAdd)
                 }
 
                 //val SD = calculateSD(intervalsBeatsTime.toDoubleArray())
-                val SD = intervalsBeatsTime.standardDeviation()
+                val SD = (intervalsBeatsTime.standardDeviation()*1000).toInt()/1000.0
+                val MRR = (intervalsBeatsTime.average()*1000).toInt()/1000.0
+                val MxDMn = ((intervalsBeatsTime.maxOrNull()!! - intervalsBeatsTime.minOrNull()!!)*1000).toInt()/1000.0
                 val (Mo, freq) = modeOf(intervalsBeatsTime.toTypedArray())
-                val AMo = (freq.toDouble() / intervalsBeatsTime.size)*100
+                val AMo = ((freq.toDouble() / intervalsBeatsTime.size)*10000).toInt()/100.0
+                val CV = (10000*SD/MRR).toInt()/100.0
+
+                var sumOfDiff = 0.0
+                var numOfDiff = 0.0
+                for(i in 1 until intervalsBeatsTime.size) {
+                    sumOfDiff += (intervalsBeatsTime[i] - intervalsBeatsTime[i-1]).pow(2)
+                    numOfDiff += 1.0
+                }
+                val RMSSD = (sqrt(sumOfDiff/numOfDiff)*100).toInt()/100.0
 
                 val BI = AMo/(2*Mo*SD)
 
-                Log.d(TAG, "___$SD $Mo $AMo $BI")
-
+                //Log.d(TAG, "___$SD $Mo $AMo $BI")
 
                 //распечатка времени всех ударов в лог
-                for (beatTime in generalBeatsTime) {
-                    Log.d(TAG, beatTime.toString())
-                }
+                //for (beatTime in generalBeatsTime) {
+                //    Log.d(TAG, beatTime.toString())
+                //}
 
                 //распечатка времени всех промежутков в лог
-                for (beatTime in intervalsBeatsTime) {
-                    Log.d(TAG, beatTime.toString())
-                }
+                //for (beatTime in intervalsBeatsTime) {
+                //    Log.d(TAG, beatTime.toString())
+                //}
 
                 val intent = Intent(this, Result::class.java)
-                intent.putExtra("BI", BI)
+
+                //intent.putExtra("BI", BI)
+                intent.putExtra("SDNN", (SD*1000).toInt().toString() + " мс")
+                intent.putExtra("MRR", (MRR*1000).toInt().toString() + " мс")
+                intent.putExtra("MxDMn", (MxDMn*1000).toInt().toString() + " мс")
+                intent.putExtra("Mo", (Mo*1000).toInt().toString() + " мс")
+                intent.putExtra("RMSSD", (RMSSD*1000).toInt().toString() + " мс")
+                intent.putExtra("AMo50", "$AMo %")
+                intent.putExtra("CV", "$CV %")
+
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
 
                 startActivity(intent)
 
-                this.finish()
+                finish()
+
             }
             processing.set(false)
         }

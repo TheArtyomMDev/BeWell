@@ -8,80 +8,51 @@
     android:id="@+id/layout2">
 
 
-    <android.support.constraint.ConstraintLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/relativeLayout2"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
 
         <TextView
-            android:id="@+id/result_info_text"
-            android:layout_width="300dp"
-            android:layout_height="66dp"
-            android:fontFamily="@font/montserrat_light"
+            android:id="@+id/label_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="24dp"
+            android:fontFamily="@font/montserrat_semi_bold"
             android:gravity="center"
-            android:text="Это хорошо"
+            android:text="Результаты замера:"
+            android:textColor="#000000"
+            android:textSize="30sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/result_info_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/montserrat_light"
+            android:gravity="left"
+            android:text="Здесь будут результаты"
             android:textColor="#000000"
             android:textSize="20sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/label_text"
             app:layout_constraintTop_toBottomOf="@+id/label_text" />
 
         <Button
             android:id="@+id/again_button"
             android:layout_width="260dp"
             android:layout_height="112dp"
-            android:layout_marginTop="172dp"
+            android:layout_marginStart="4dp"
+            android:layout_marginTop="96dp"
             android:background="@drawable/again_button"
-            app:layout_constraintEnd_toEndOf="parent"
+            android:visibility="gone"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/canvas2"
-            tools:ignore="SpeakableTextPresentCheck" />
-
-        <TextView
-            android:id="@+id/label_text"
-            android:layout_width="321dp"
-            android:layout_height="35dp"
-            android:fontFamily="@font/montserrat_semi_bold"
-            android:gravity="center"
-            android:text="Ваш индекс напряжения"
-            android:textColor="#000000"
-            android:textSize="20sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/canvas2" />
-
-        <TextView
-            android:id="@+id/result_text"
-            android:layout_width="300dp"
-            android:layout_height="180dp"
-            android:layout_marginTop="152dp"
-            android:fontFamily="@font/montserrat_semi_bold"
-            android:gravity="center"
-            android:shadowColor="@color/text_shadow"
-            android:shadowDx="1"
-            android:shadowDy="5"
-            android:shadowRadius="10"
-            android:text="125"
-            android:textColor="#000000"
-            android:textSize="50sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.497"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <view
-            android:id="@+id/canvas2"
-            class="com.example.sachin.heart.Result$BarView2"
-            android:layout_width="371dp"
-            android:layout_height="371dp"
-            app:layout_constraintBottom_toBottomOf="@+id/result_text"
-            app:layout_constraintEnd_toEndOf="@+id/result_text"
-            app:layout_constraintHorizontal_bias="0.497"
-            app:layout_constraintStart_toStartOf="@+id/result_text"
-            app:layout_constraintTop_toTopOf="@+id/result_text"
-            app:layout_constraintVertical_bias="0.471" />
+            app:layout_constraintTop_toBottomOf="@+id/result_info_text"
+            tools:ignore="SpeakableTextPresentCheck"
+            tools:visibility="gone" />
 
 
-    </android.support.constraint.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </LinearLayout>

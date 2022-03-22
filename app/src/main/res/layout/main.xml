@@ -8,7 +8,7 @@
 	android:id="@+id/layout2">
 
 
-	<android.support.constraint.ConstraintLayout
+	<androidx.constraintlayout.widget.ConstraintLayout
 		android:id="@+id/relativeLayout2"
 		android:layout_width="match_parent"
 		android:layout_height="match_parent">
@@ -40,10 +40,10 @@
 			android:gravity="center"
 			android:text="@string/default_text"
 			android:textSize="20sp"
-			android:visibility="invisible"
+			android:visibility="visible"
 			app:layout_constraintBottom_toBottomOf="parent"
 			app:layout_constraintEnd_toEndOf="parent"
-			tools:visibility="invisible" />
+			tools:visibility="visible" />
 
 		<TextView
 			android:id="@+id/red_level_text"
@@ -122,5 +122,5 @@
 			app:layout_constraintTop_toBottomOf="@+id/canvas" />
 
 
-	</android.support.constraint.ConstraintLayout>
+	</androidx.constraintlayout.widget.ConstraintLayout>
 </LinearLayout>
