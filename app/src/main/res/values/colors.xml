@@ -1,12 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
 
-    <color name="light_font">#FBFBFB</color>
-    <color name="grey_font">#ff9e9e9e</color>
     <color name="text_shadow">#7F000000</color>
-    <color name="text_shadow_white">#FFFFFF</color>
+    <color name="soft_green">#BDFAC6</color>
+    <color name="soft_yellow">#FAE09E</color>
+    <color name="soft_red">#FA9E9E</color>
 
 </resources>

@@ -1,58 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:id="@+id/layout2">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:animateLayoutChanges="true">
 
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/relativeLayout2"
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/app_bar"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        >
+
+        <com.google.android.material.appbar.CollapsingToolbarLayout
+            app:toolbarId="@+id/collapsing_toolbar_2"
+            android:id="@+id/collapsing_toolbar"
+
+            android:layout_width="match_parent"
+            android:layout_height="150dp"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed"
+            app:title="Результаты измерений"
+            style="?attr/collapsingToolbarLayoutLargeStyle"
+            app:contentScrim="?attr/colorPrimaryContainer"
+            app:titleCollapseMode="scale">
+
+            <com.google.android.material.appbar.MaterialToolbar
+
+                android:id="@+id/my_toolbar"
+                android:layout_height="?attr/actionBarSize"
+                android:layout_width="match_parent"
+                app:layout_collapseMode="pin"
+                />
+        </com.google.android.material.appbar.CollapsingToolbarLayout>
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <LinearLayout
+        android:id="@+id/nestedScrollView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
+        android:animateLayoutChanges="true">
 
 
-        <TextView
-            android:id="@+id/label_text"
-            android:layout_width="wrap_content"
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/results_recycler_view"
+
+            tools:listitem="@layout/recyclerview_item"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="24dp"
-            android:fontFamily="@font/montserrat_semi_bold"
-            android:gravity="center"
-            android:text="Результаты замера:"
-            android:textColor="#000000"
-            android:textSize="30sp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/result_info_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/montserrat_light"
-            android:gravity="left"
-            android:text="Здесь будут результаты"
-            android:textColor="#000000"
-            android:textSize="20sp"
-            app:layout_constraintStart_toStartOf="@+id/label_text"
-            app:layout_constraintTop_toBottomOf="@+id/label_text" />
-
-        <Button
-            android:id="@+id/again_button"
-            android:layout_width="260dp"
-            android:layout_height="112dp"
-            android:layout_marginStart="4dp"
-            android:layout_marginTop="96dp"
-            android:background="@drawable/again_button"
-            android:visibility="gone"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/result_info_text"
-            tools:ignore="SpeakableTextPresentCheck"
-            tools:visibility="gone" />
+            app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+    </LinearLayout>
 
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
-</LinearLayout>
+
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

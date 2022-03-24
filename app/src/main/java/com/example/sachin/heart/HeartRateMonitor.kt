@@ -12,19 +12,21 @@ import android.os.Bundle
 import android.os.CountDownTimer
 import android.os.PowerManager
 import android.os.PowerManager.WakeLock
-import androidx.core.content.ContextCompat
 import android.util.AttributeSet
 import android.util.Log
+import android.util.TypedValue
 import android.view.SurfaceHolder
 import android.view.SurfaceView
 import android.view.View
 import android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
 import android.widget.Button
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import com.jjoe64.graphview.GraphView
 import com.jjoe64.graphview.series.DataPoint
 import org.nield.kotlinstatistics.standardDeviation
 import java.util.concurrent.atomic.AtomicBoolean
+import kotlin.math.min
 import kotlin.math.pow
 import kotlin.math.roundToInt
 import kotlin.math.sqrt
@@ -50,7 +52,7 @@ class HeartRateMonitor : Activity() {
     var current = TYPE.GREEN
         private set
 
-    private var measureTimeInSec = 20
+    private var measureTimeInSec = 10
     private var averageIndex = 0
     private val averageArraySize = 4
     private var beatsIndex = 0
@@ -103,34 +105,124 @@ class HeartRateMonitor : Activity() {
         private val paint = Paint()
         private var translated = false
 
+        var deltaX1 = 0.0F
+        var deltaY1 = -100.0F
+        var reverseX1 = false
+        var reverseY1 = false
+
+        var deltaX2 = 0.0F
+        var deltaY2 = 100.0F
+        var reverseX2 = true
+        var reverseY2 = true
+
+        var deltaX3 = -100.0F
+        var deltaY3 = 0.0F
+        var reverseX3 = false
+        var reverseY3 = true
+
         // Called when the view should render its content.
         override fun onDraw(canvas: Canvas?) {
             super.onDraw(canvas)
 
             val width = measuredWidth.toFloat()
             val height = measuredHeight.toFloat()
-            val radius = (0.6*width/2).toFloat()
+            val radius = (width/100).toFloat()
 
+            /*
             if(!translated) {
                 rotator.postTranslate(63F, 63F)
                 //rotator.postRotate(90F, resizedWidth/2F + 60.9F, resizedHeight/2F + 60.9F)
                 translated = true
             }
-            rotator.postRotate(rotateAngle, resizedWidth/2F + 60.9F, resizedHeight/2F + 60.9F)
+            */
+
+            /*rotator.postRotate(rotateAngle, resizedWidth/2F + 60.9F, resizedHeight/2F + 60.9F)*/
             // rotate around x,y
             // NOTE: coords in bitmap-space!
 
-            paint.color = Color.WHITE
-            paint.style = Paint.Style.STROKE
-            paint.strokeWidth = 200F
-            canvas!!.drawCircle(width/2, height/2, radius, paint);
+            val value = TypedValue()
+            context.theme.resolveAttribute(R.attr.colorPrimary, value, true)
 
+            paint.color = value.data
+            paint.style = Paint.Style.FILL_AND_STROKE
+            //paint.strokeWidth = 20F
+            //canvas!!.drawPoint(width/2, height/2, paint)
+            canvas!!.drawCircle(width/2+deltaX1, height/2+deltaY1, radius, paint)
+            canvas!!.drawCircle(width/2-300+deltaX2, height/2+deltaY2, radius, paint)
+            canvas!!.drawCircle(width/2+300+deltaX3, height/2+deltaY3, radius, paint)
+
+
+
+            /*
             //canvas.drawBitmap(mBitmap, width/2-425, height/2-400, paint);
             canvas.drawBitmap(resizedLoadBitmapBackground, width/2 - resizedWidth/2F, height/2 - resizedHeight/2F, paint)
             canvas.drawBitmap(resizedLoadBitmap, rotator, paint);
 
             rotateAngle += deltaAngle
             if(rotateAngle > 15.0F || rotateAngle < 0F) deltaAngle = -deltaAngle
+            */
+
+            invalidate()
+
+            if(deltaX1 > 100F) reverseX1 = true
+            else if(deltaX1 < -100F) reverseX1 = false
+            if(deltaY1 > 100F) reverseY1 = true
+            else if(deltaY1 < -100F) reverseY1 = false
+            if(!reverseX1) deltaX1 += 5F
+            else deltaX1 -= 5F
+            if(!reverseY1) deltaY1 += 5F
+            else deltaY1 -= 5F
+
+            if(deltaX2 > 100F) reverseX2 = true
+            else if(deltaX2 < -100F) reverseX2 = false
+            if(deltaY2 > 100F) reverseY2 = true
+            else if(deltaY2 < -100F) reverseY2 = false
+            if(!reverseX2) deltaX2 += 5F
+            else deltaX2 -= 5F
+            if(!reverseY2) deltaY2 += 5F
+            else deltaY2 -= 5F
+
+            if(deltaX3 > 100F) reverseX3 = true
+            else if(deltaX3 < -100F) reverseX3 = false
+            if(deltaY3 > 100F) reverseY3 = true
+            else if(deltaY3 < -100F) reverseY3 = false
+            if(!reverseX3) deltaX3 += 5F
+            else deltaX3 -= 5F
+            if(!reverseY3) deltaY3 += 5F
+            else deltaY3 -= 5F
+
+        }
+    }
+
+    class CustomView2 @JvmOverloads constructor(context: Context,
+                                               attrs: AttributeSet? = null, defStyleAttr: Int = 0)
+        : View(context, attrs, defStyleAttr) {
+
+        val oval = RectF()
+
+        private val paint = Paint()
+
+        // Called when the view should render its content.
+        override fun onDraw(canvas: Canvas?) {
+            super.onDraw(canvas)
+
+            val width = measuredWidth.toFloat()
+            val height = measuredHeight.toFloat()
+            val radius = width/4
+            val centerX = width / 2
+            val centerY = height / 2
+
+            paint.color = Color.WHITE
+            paint.style = Paint.Style.STROKE
+            paint.strokeWidth = 30F
+            //canvas!!.drawCircle(width/2, height/2, radius, paint)
+
+            oval.set(centerX - radius,
+                centerY - radius,
+                centerX + radius,
+                centerY + radius)
+            canvas!!.drawArc(oval, 270F, 100F, false, paint)
+
             invalidate()
         }
     }
@@ -152,7 +244,6 @@ class HeartRateMonitor : Activity() {
         previewHolder!!.addCallback(surfaceCallback)
         text = findViewById(R.id.result_info_text)
         imgavgtxt = findViewById(R.id.red_level_text)
-        graph = findViewById<View>(R.id.graph) as GraphView
         timeText = findViewById(R.id.time_text)
 
         timer.start()
@@ -294,31 +385,37 @@ class HeartRateMonitor : Activity() {
                     numOfDiff += 1.0
                 }
                 val RMSSD = (sqrt(sumOfDiff/numOfDiff)*100).toInt()/100.0
-
-                val BI = AMo/(2*Mo*SD)
-
-                //Log.d(TAG, "___$SD $Mo $AMo $BI")
-
-                //распечатка времени всех ударов в лог
-                //for (beatTime in generalBeatsTime) {
-                //    Log.d(TAG, beatTime.toString())
-                //}
-
-                //распечатка времени всех промежутков в лог
-                //for (beatTime in intervalsBeatsTime) {
-                //    Log.d(TAG, beatTime.toString())
-                //}
-
                 val intent = Intent(this, Result::class.java)
 
-                //intent.putExtra("BI", BI)
-                intent.putExtra("SDNN", (SD*1000).toInt().toString() + " мс")
-                intent.putExtra("MRR", (MRR*1000).toInt().toString() + " мс")
-                intent.putExtra("MxDMn", (MxDMn*1000).toInt().toString() + " мс")
-                intent.putExtra("Mo", (Mo*1000).toInt().toString() + " мс")
-                intent.putExtra("RMSSD", (RMSSD*1000).toInt().toString() + " мс")
-                intent.putExtra("AMo50", "$AMo %")
-                intent.putExtra("CV", "$CV %")
+                val values = listOf(
+                    param(SD*1000, "SDNN", "мс", 30.0, 96.0, "Стандартное отклонение интервалов. Показывает состояние вегетативной нервной системы"),
+                    param(MRR*1000, "MRR", "мс", 660.0, 1370.0, "Средняя длительность интервалов. Оценивает напряженность организма в целом"),
+                    param(MxDMn*1000, "MxDMn", "мс", 120.0, 450.0, "Размах интервалов. Чем выше, тем ниже напряжение"),
+                    param(Mo*1000, "Mo", "мс", 660.0, 1370.0, "Самая частая длина интервалов. Отвечает за стабильность процессов в организме"),
+                    param(RMSSD*1000, "RMSSD", "мс", 20.0, 89.0, "Корень из среднего значения квадратов различий между соседними интервалами. Оценка активности парасимпатического отдела"),
+                    param(AMo, "AMo50", "%", 26.0, 50.0, "Амплитуда моды. Показывает активность парасимпатического отдела"),
+                    param(CV, "CV", "%", 5.1, 8.3, "Коэффициент вариабельности. Основной показатель здоровья сердца")
+                )
+
+
+                for(elem in values) {
+
+                    var colour = "red"
+                    if(elem.value >= elem.minValue && elem.value <= elem.maxValue)
+                        colour = "green"
+                    else if(min(elem.value-elem.maxValue, elem.value-elem.minValue) < 0.2*(elem.maxValue - elem.minValue))
+                        colour = "yellow"
+
+                    intent.putStringArrayListExtra(
+                        elem.name,
+                        arrayListOf(
+                            "${elem.value} ${elem.dimension}",
+                            "Норма ${elem.minValue}-${elem.maxValue}",
+                            colour,
+                            elem.description
+                        )
+                    )
+                }
 
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
 
@@ -382,3 +479,11 @@ class HeartRateMonitor : Activity() {
             return result
         }
     }
+data class param(
+    val value: Double,
+    val name: String,
+    val dimension: String,
+    val minValue: Double,
+    val maxValue: Double,
+    val description: String
+)
