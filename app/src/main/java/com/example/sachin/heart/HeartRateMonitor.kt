@@ -37,6 +37,12 @@ class HeartRateMonitor : Activity() {
     enum class TYPE {
         GREEN, RED
     }
+
+    companion object {
+        private var measureTimeInSec = 20
+        private var generalStartTime: Long = 0
+    }
+
     private val TAG = "HeartRateMonitor"
     private val processing = AtomicBoolean(false)
     private var previewHolder: SurfaceHolder? = null
@@ -46,13 +52,11 @@ class HeartRateMonitor : Activity() {
     private var timeText: TextView? = null
     private var preview: SurfaceView? = null
     private var cancelButton: Button? = null
-    private var graph: GraphView? = null
     private var wakeLock: WakeLock? = null
 
     var current = TYPE.GREEN
         private set
 
-    private var measureTimeInSec = 10
     private var averageIndex = 0
     private val averageArraySize = 4
     private var beatsIndex = 0
@@ -60,7 +64,6 @@ class HeartRateMonitor : Activity() {
     private val beatsArray = IntArray(beatsArraySize)
     private var beats = 0.0
     private var startTime: Long = 0
-    private var generalStartTime: Long = 0
     private var currentBeatTime: Long = 0
     private var lastBeatTime: Long = 0
 
@@ -92,105 +95,87 @@ class HeartRateMonitor : Activity() {
                                                attrs: AttributeSet? = null, defStyleAttr: Int = 0)
         : View(context, attrs, defStyleAttr) {
 
-        var rotateAngle = 0F
-        var deltaAngle = 0.3F
-        var resizedWidth = 900
-        var resizedHeight = 900
-
-        private var loadBitmap: Bitmap = BitmapFactory.decodeResource(resources, R.drawable.load)
-        private var resizedLoadBitmap: Bitmap = Bitmap.createScaledBitmap(loadBitmap, resizedWidth, resizedHeight, false)
-        private var loadBitmapBackground: Bitmap = BitmapFactory.decodeResource(resources, R.drawable.load_background)
-        private var resizedLoadBitmapBackground: Bitmap = Bitmap.createScaledBitmap(loadBitmapBackground, resizedWidth, resizedHeight, false)
-        private var rotator = Matrix()
         private val paint = Paint()
-        private var translated = false
+        private val value = TypedValue()
+        private val value2 = TypedValue()
+        private val path = Path()
 
-        var deltaX1 = 0.0F
-        var deltaY1 = -100.0F
-        var reverseX1 = false
-        var reverseY1 = false
-
-        var deltaX2 = 0.0F
-        var deltaY2 = 100.0F
-        var reverseX2 = true
-        var reverseY2 = true
-
-        var deltaX3 = -100.0F
-        var deltaY3 = 0.0F
-        var reverseX3 = false
-        var reverseY3 = true
+        var a = 400F
+        var b = 400F
+        var thickness = 20F
+        var beatWidth = 120F
+        var deltaX = 0.0F
 
         // Called when the view should render its content.
         override fun onDraw(canvas: Canvas?) {
             super.onDraw(canvas)
 
+            path.reset()
+            context.theme.resolveAttribute(R.attr.colorPrimary, value, true)
+            context.theme.resolveAttribute(R.attr.colorSurface, value2, true)
+
             val width = measuredWidth.toFloat()
             val height = measuredHeight.toFloat()
-            val radius = (width/100).toFloat()
 
-            /*
-            if(!translated) {
-                rotator.postTranslate(63F, 63F)
-                //rotator.postRotate(90F, resizedWidth/2F + 60.9F, resizedHeight/2F + 60.9F)
-                translated = true
-            }
-            */
+            var shader = LinearGradient(
+                width/2 - a/2, height/2, width/2 + a/2, height/2,
+                value2.data, value.data, Shader.TileMode.MIRROR
+            )
 
-            /*rotator.postRotate(rotateAngle, resizedWidth/2F + 60.9F, resizedHeight/2F + 60.9F)*/
-            // rotate around x,y
-            // NOTE: coords in bitmap-space!
+            ///////
 
-            val value = TypedValue()
-            context.theme.resolveAttribute(R.attr.colorPrimary, value, true)
-
-            paint.color = value.data
             paint.style = Paint.Style.FILL_AND_STROKE
-            //paint.strokeWidth = 20F
-            //canvas!!.drawPoint(width/2, height/2, paint)
-            canvas!!.drawCircle(width/2+deltaX1, height/2+deltaY1, radius, paint)
-            canvas!!.drawCircle(width/2-300+deltaX2, height/2+deltaY2, radius, paint)
-            canvas!!.drawCircle(width/2+300+deltaX3, height/2+deltaY3, radius, paint)
+            paint.shader = shader
+            canvas!!.drawRect(width/2 - a/2, height/2 - b/2, width/2 + a/2, height/2 + b/2, paint)
 
+            paint.shader = null
+            paint.color = value2.data
+            canvas.drawRect(deltaX + width/2 - a/2, height/2 + thickness/2, deltaX + width/2 + a/2, height/2 + b/2, paint)
+            canvas.drawRect(deltaX + width/2 - a/2, height/2 - b/2, deltaX + width/2 + a/2, height/2 - thickness/2, paint)
 
+            path.moveTo(deltaX + width/2 + a/2, height/2 - b/2)
+            path.lineTo(deltaX + width/2 + a/2 + beatWidth/2, height/2 - b/2)
+            path.lineTo(deltaX + width/2 + a/2, height/2 - thickness/2)
 
-            /*
-            //canvas.drawBitmap(mBitmap, width/2-425, height/2-400, paint);
-            canvas.drawBitmap(resizedLoadBitmapBackground, width/2 - resizedWidth/2F, height/2 - resizedHeight/2F, paint)
-            canvas.drawBitmap(resizedLoadBitmap, rotator, paint);
+            path.moveTo(deltaX + beatWidth + width/2 + a/2, height/2 - b/2)
+            path.lineTo(deltaX + beatWidth + width/2 + a/2, height/2 - thickness/2)
+            path.lineTo(deltaX + beatWidth/2 + width/2 + a/2, height/2 - b/2)
 
-            rotateAngle += deltaAngle
-            if(rotateAngle > 15.0F || rotateAngle < 0F) deltaAngle = -deltaAngle
-            */
+            path.moveTo(deltaX + width/2 + a/2, height/2 + thickness/2)
+            path.lineTo(deltaX + beatWidth/2 + width/2 + a/2, height/2 - b/2 + thickness)
+            path.lineTo(deltaX + beatWidth + width/2 + a/2, height/2 + thickness/2)
 
+            canvas!!.drawRect(deltaX + width/2 + a/2, height/2 + thickness/2, deltaX + beatWidth + width/2 + a/2, height/2 + b/2, paint)
+
+            ////////////
+
+            //paint.color = Color.WHITE
+            canvas!!.drawRect(deltaX + beatWidth + width/2 + a/2, height/2 + thickness/2, deltaX + beatWidth + width/2 + 1.5F*a, height/2 + b/2, paint)
+            canvas!!.drawRect(deltaX + beatWidth + width/2 + a/2, height/2 - b/2, deltaX + beatWidth + width/2 + 1.5F*a, height/2 - thickness/2, paint)
+
+            path.moveTo(deltaX + width/2 + 1.5F*a + beatWidth, height/2 - b/2)
+            path.lineTo(deltaX + width/2 + 1.5F*a + 1.5F*beatWidth, height/2 - b/2)
+            path.lineTo(deltaX + width/2 + 1.5F*a + beatWidth, height/2 - thickness/2)
+
+            path.moveTo(deltaX + 2F*beatWidth + width/2 + 1.5F*a, height/2 - b/2)
+            path.lineTo(deltaX + 2F*beatWidth + width/2 + 1.5F*a, height/2 - thickness/2)
+            path.lineTo(deltaX + 1.5F*beatWidth + width/2 + 1.5F*a, height/2 - b/2)
+
+            path.moveTo(deltaX + beatWidth + width/2 + 1.5F*a, height/2 + thickness/2)
+            path.lineTo(deltaX + 1.5F*beatWidth + width/2 + 1.5F*a, height/2 - b/2 + thickness)
+            path.lineTo(deltaX + 2F*beatWidth + width/2 + 1.5F*a, height/2 + thickness/2)
+
+            canvas!!.drawRect(deltaX + beatWidth + width/2 + 1.5F*a, height/2 + thickness/2, deltaX + 2*beatWidth + width/2 + 1.5F*a, height/2 + b/2, paint)
+
+            ///////////
+
+            canvas.drawPath(path, paint)
+
+            path.close()
             invalidate()
 
-            if(deltaX1 > 100F) reverseX1 = true
-            else if(deltaX1 < -100F) reverseX1 = false
-            if(deltaY1 > 100F) reverseY1 = true
-            else if(deltaY1 < -100F) reverseY1 = false
-            if(!reverseX1) deltaX1 += 5F
-            else deltaX1 -= 5F
-            if(!reverseY1) deltaY1 += 5F
-            else deltaY1 -= 5F
-
-            if(deltaX2 > 100F) reverseX2 = true
-            else if(deltaX2 < -100F) reverseX2 = false
-            if(deltaY2 > 100F) reverseY2 = true
-            else if(deltaY2 < -100F) reverseY2 = false
-            if(!reverseX2) deltaX2 += 5F
-            else deltaX2 -= 5F
-            if(!reverseY2) deltaY2 += 5F
-            else deltaY2 -= 5F
-
-            if(deltaX3 > 100F) reverseX3 = true
-            else if(deltaX3 < -100F) reverseX3 = false
-            if(deltaY3 > 100F) reverseY3 = true
-            else if(deltaY3 < -100F) reverseY3 = false
-            if(!reverseX3) deltaX3 += 5F
-            else deltaX3 -= 5F
-            if(!reverseY3) deltaY3 += 5F
-            else deltaY3 -= 5F
-
+            deltaX -= 5F
+            if(deltaX <= -a-beatWidth) deltaX = 0.0F
         }
     }
 
@@ -198,9 +183,10 @@ class HeartRateMonitor : Activity() {
                                                attrs: AttributeSet? = null, defStyleAttr: Int = 0)
         : View(context, attrs, defStyleAttr) {
 
-        val oval = RectF()
-
+        private val oval = RectF()
         private val paint = Paint()
+
+        private var angle = 0.0F
 
         // Called when the view should render its content.
         override fun onDraw(canvas: Canvas?) {
@@ -221,7 +207,9 @@ class HeartRateMonitor : Activity() {
                 centerY - radius,
                 centerX + radius,
                 centerY + radius)
-            canvas!!.drawArc(oval, 270F, 100F, false, paint)
+            canvas!!.drawArc(oval, 270F, angle, false, paint)
+
+            angle = (360*(System.currentTimeMillis() - generalStartTime)/(1000F*measureTimeInSec))
 
             invalidate()
         }

@@ -22,15 +22,15 @@
 		android:id="@+id/result_info_text"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:layout_marginBottom="3dp"
+		android:layout_marginBottom="28dp"
 		android:gravity="center"
 		android:text="-- bpm"
 		android:textSize="30sp"
 		android:visibility="visible"
 		app:layout_constraintBottom_toTopOf="@+id/preview"
 		app:layout_constraintEnd_toEndOf="parent"
+		app:layout_constraintHorizontal_bias="0.498"
 		app:layout_constraintStart_toStartOf="parent"
-		app:layout_constraintTop_toBottomOf="@+id/canvas"
 		tools:visibility="visible" />
 
 	<TextView
@@ -57,12 +57,12 @@
 		android:id="@+id/canvas"
 		class="com.example.sachin.heart.HeartRateMonitor$CustomView"
 		android:layout_width="fill_parent"
-		android:layout_height="157dp"
-		android:layout_marginTop="16dp"
+		android:layout_height="202dp"
+		app:layout_constraintBottom_toTopOf="@+id/result_info_text"
 		app:layout_constraintEnd_toEndOf="parent"
 		app:layout_constraintHorizontal_bias="0.0"
 		app:layout_constraintStart_toStartOf="parent"
-		app:layout_constraintTop_toBottomOf="@+id/info_text" />
+		app:layout_constraintTop_toTopOf="parent" />
 
 	<Button
 		android:id="@+id/cancel_button"
@@ -95,20 +95,22 @@
 		android:id="@+id/info_text"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:layout_marginTop="24dp"
+		android:layout_marginTop="124dp"
 		android:fontFamily="@font/montserrat_semi_bold"
 		android:gravity="center"
 		android:text="Идёт измерение"
 		android:textColor="#000000"
 		android:textSize="20sp"
+		android:visibility="gone"
 		app:layout_constraintEnd_toEndOf="parent"
+		app:layout_constraintHorizontal_bias="0.539"
 		app:layout_constraintStart_toStartOf="parent"
 		app:layout_constraintTop_toTopOf="parent" />
 
 	<SurfaceView
 		android:id="@+id/preview"
-		android:layout_width="419dp"
-		android:layout_height="424dp"
+		android:layout_width="fill_parent"
+		android:layout_height="475dp"
 		app:layout_constraintBottom_toBottomOf="parent"
 		app:layout_constraintEnd_toEndOf="parent"
 		app:layout_constraintHorizontal_bias="0.0"
