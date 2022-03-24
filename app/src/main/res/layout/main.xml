@@ -55,7 +55,7 @@
 
 	<view
 		android:id="@+id/canvas"
-		class="com.example.sachin.heart.HeartRateMonitor$CustomView"
+		class="com.example.sachin.heart.CustomView"
 		android:layout_width="fill_parent"
 		android:layout_height="202dp"
 		app:layout_constraintBottom_toTopOf="@+id/result_info_text"

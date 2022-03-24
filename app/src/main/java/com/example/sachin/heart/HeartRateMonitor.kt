@@ -33,18 +33,21 @@ import kotlin.math.sqrt
 import kotlin.system.exitProcess
 
 
+var going = false
+
 class HeartRateMonitor : Activity() {
     enum class TYPE {
         GREEN, RED
     }
 
     companion object {
-        private var measureTimeInSec = 20
-        private var generalStartTime: Long = 0
+        var measureTimeInSec = 20
+        var generalStartTime: Long = 0
+        var imgAvg = 0
     }
 
-    private val TAG = "HeartRateMonitor"
     private val processing = AtomicBoolean(false)
+    private val TAG = "HeartRateMonitor"
     private var previewHolder: SurfaceHolder? = null
     private var camera: Camera? = null
     private var text: TextView? = null
@@ -91,93 +94,7 @@ class HeartRateMonitor : Activity() {
         }
     }
 
-    class CustomView @JvmOverloads constructor(context: Context,
-                                               attrs: AttributeSet? = null, defStyleAttr: Int = 0)
-        : View(context, attrs, defStyleAttr) {
 
-        private val paint = Paint()
-        private val value = TypedValue()
-        private val value2 = TypedValue()
-        private val path = Path()
-
-        var a = 400F
-        var b = 400F
-        var thickness = 20F
-        var beatWidth = 120F
-        var deltaX = 0.0F
-
-        // Called when the view should render its content.
-        override fun onDraw(canvas: Canvas?) {
-            super.onDraw(canvas)
-
-            path.reset()
-            context.theme.resolveAttribute(R.attr.colorPrimary, value, true)
-            context.theme.resolveAttribute(R.attr.colorSurface, value2, true)
-
-            val width = measuredWidth.toFloat()
-            val height = measuredHeight.toFloat()
-
-            var shader = LinearGradient(
-                width/2 - a/2, height/2, width/2 + a/2, height/2,
-                value2.data, value.data, Shader.TileMode.MIRROR
-            )
-
-            ///////
-
-            paint.style = Paint.Style.FILL_AND_STROKE
-            paint.shader = shader
-            canvas!!.drawRect(width/2 - a/2, height/2 - b/2, width/2 + a/2, height/2 + b/2, paint)
-
-            paint.shader = null
-            paint.color = value2.data
-            canvas.drawRect(deltaX + width/2 - a/2, height/2 + thickness/2, deltaX + width/2 + a/2, height/2 + b/2, paint)
-            canvas.drawRect(deltaX + width/2 - a/2, height/2 - b/2, deltaX + width/2 + a/2, height/2 - thickness/2, paint)
-
-            path.moveTo(deltaX + width/2 + a/2, height/2 - b/2)
-            path.lineTo(deltaX + width/2 + a/2 + beatWidth/2, height/2 - b/2)
-            path.lineTo(deltaX + width/2 + a/2, height/2 - thickness/2)
-
-            path.moveTo(deltaX + beatWidth + width/2 + a/2, height/2 - b/2)
-            path.lineTo(deltaX + beatWidth + width/2 + a/2, height/2 - thickness/2)
-            path.lineTo(deltaX + beatWidth/2 + width/2 + a/2, height/2 - b/2)
-
-            path.moveTo(deltaX + width/2 + a/2, height/2 + thickness/2)
-            path.lineTo(deltaX + beatWidth/2 + width/2 + a/2, height/2 - b/2 + thickness)
-            path.lineTo(deltaX + beatWidth + width/2 + a/2, height/2 + thickness/2)
-
-            canvas!!.drawRect(deltaX + width/2 + a/2, height/2 + thickness/2, deltaX + beatWidth + width/2 + a/2, height/2 + b/2, paint)
-
-            ////////////
-
-            //paint.color = Color.WHITE
-            canvas!!.drawRect(deltaX + beatWidth + width/2 + a/2, height/2 + thickness/2, deltaX + beatWidth + width/2 + 1.5F*a, height/2 + b/2, paint)
-            canvas!!.drawRect(deltaX + beatWidth + width/2 + a/2, height/2 - b/2, deltaX + beatWidth + width/2 + 1.5F*a, height/2 - thickness/2, paint)
-
-            path.moveTo(deltaX + width/2 + 1.5F*a + beatWidth, height/2 - b/2)
-            path.lineTo(deltaX + width/2 + 1.5F*a + 1.5F*beatWidth, height/2 - b/2)
-            path.lineTo(deltaX + width/2 + 1.5F*a + beatWidth, height/2 - thickness/2)
-
-            path.moveTo(deltaX + 2F*beatWidth + width/2 + 1.5F*a, height/2 - b/2)
-            path.lineTo(deltaX + 2F*beatWidth + width/2 + 1.5F*a, height/2 - thickness/2)
-            path.lineTo(deltaX + 1.5F*beatWidth + width/2 + 1.5F*a, height/2 - b/2)
-
-            path.moveTo(deltaX + beatWidth + width/2 + 1.5F*a, height/2 + thickness/2)
-            path.lineTo(deltaX + 1.5F*beatWidth + width/2 + 1.5F*a, height/2 - b/2 + thickness)
-            path.lineTo(deltaX + 2F*beatWidth + width/2 + 1.5F*a, height/2 + thickness/2)
-
-            canvas!!.drawRect(deltaX + beatWidth + width/2 + 1.5F*a, height/2 + thickness/2, deltaX + 2*beatWidth + width/2 + 1.5F*a, height/2 + b/2, paint)
-
-            ///////////
-
-            canvas.drawPath(path, paint)
-
-            path.close()
-            invalidate()
-
-            deltaX -= 5F
-            if(deltaX <= -a-beatWidth) deltaX = 0.0F
-        }
-    }
 
     class CustomView2 @JvmOverloads constructor(context: Context,
                                                attrs: AttributeSet? = null, defStyleAttr: Int = 0)
@@ -268,12 +185,17 @@ class HeartRateMonitor : Activity() {
             if (!processing.compareAndSet(false, true)) return@PreviewCallback
             val width = size.width
             val height = size.height
-            val imgAvg = ImageProcessing.decodeYUV420SPtoRedAvg(data.clone(), height, width)
+            imgAvg = ImageProcessing.decodeYUV420SPtoRedAvg(data.clone(), height, width)
 
-            if (imgAvg == 0 || imgAvg == 255) {
+            updateProcessing(processing)
+
+            if (imgAvg < 180 || imgAvg == 255) {
                 processing.set(false)
+                updateProcessing(processing)
+                startValues()
                 return@PreviewCallback
             }
+
             var averageArrayAvg = 0
             var averageArrayCnt = 0
             for (i in averageArray.indices) {
@@ -475,3 +397,166 @@ data class param(
     val maxValue: Double,
     val description: String
 )
+
+fun updateProcessing(x: AtomicBoolean) {
+    going = x.get()
+    println("set to ${x.get()}")
+}
+
+fun startValues() {
+    HeartRateMonitor.generalStartTime = System.currentTimeMillis()
+}
+
+class CustomView @JvmOverloads constructor(context: Context,
+                                           attrs: AttributeSet? = null, defStyleAttr: Int = 0)
+    : View(context, attrs, defStyleAttr) {
+
+    private val paint = Paint()
+    private val value = TypedValue()
+    private val value2 = TypedValue()
+    private val path = Path()
+
+    var a = 400F
+    var b = 400F
+    var thickness = 20F
+    var beatWidth = 120F
+    var deltaX = 0.0F
+
+    // Called when the view should render its content.
+    override fun onDraw(canvas: Canvas?) {
+        super.onDraw(canvas)
+
+        val width = measuredWidth.toFloat()
+        val height = measuredHeight.toFloat()
+        val text = "Положите палец на камеру"
+
+        if(going) {
+
+            path.reset()
+            context.theme.resolveAttribute(R.attr.colorPrimary, value, true)
+            context.theme.resolveAttribute(R.attr.colorSurface, value2, true)
+
+            var shader = LinearGradient(
+                width / 2 - a / 2, height / 2, width / 2 + a / 2, height / 2,
+                value2.data, value.data, Shader.TileMode.MIRROR
+            )
+
+            ///////
+
+            paint.style = Paint.Style.FILL_AND_STROKE
+            paint.shader = shader
+            canvas!!.drawRect(
+                width / 2 - a / 2,
+                height / 2 - b / 2,
+                width / 2 + a / 2,
+                height / 2 + b / 2,
+                paint
+            )
+
+            paint.shader = null
+            paint.color = value2.data
+            canvas.drawRect(
+                deltaX + width / 2 - a / 2,
+                height / 2 + thickness / 2,
+                deltaX + width / 2 + a / 2,
+                height / 2 + b / 2,
+                paint
+            )
+            canvas.drawRect(
+                deltaX + width / 2 - a / 2,
+                height / 2 - b / 2,
+                deltaX + width / 2 + a / 2,
+                height / 2 - thickness / 2,
+                paint
+            )
+
+            path.moveTo(deltaX + width / 2 + a / 2, height / 2 - b / 2)
+            path.lineTo(deltaX + width / 2 + a / 2 + beatWidth / 2, height / 2 - b / 2)
+            path.lineTo(deltaX + width / 2 + a / 2, height / 2 - thickness / 2)
+
+            path.moveTo(deltaX + beatWidth + width / 2 + a / 2, height / 2 - b / 2)
+            path.lineTo(deltaX + beatWidth + width / 2 + a / 2, height / 2 - thickness / 2)
+            path.lineTo(deltaX + beatWidth / 2 + width / 2 + a / 2, height / 2 - b / 2)
+
+            path.moveTo(deltaX + width / 2 + a / 2, height / 2 + thickness / 2)
+            path.lineTo(
+                deltaX + beatWidth / 2 + width / 2 + a / 2,
+                height / 2 - b / 2 + thickness
+            )
+            path.lineTo(deltaX + beatWidth + width / 2 + a / 2, height / 2 + thickness / 2)
+
+            canvas!!.drawRect(
+                deltaX + width / 2 + a / 2,
+                height / 2 + thickness / 2,
+                deltaX + beatWidth + width / 2 + a / 2,
+                height / 2 + b / 2,
+                paint
+            )
+
+            ////////////
+
+            //paint.color = Color.WHITE
+            canvas!!.drawRect(
+                deltaX + beatWidth + width / 2 + a / 2,
+                height / 2 + thickness / 2,
+                deltaX + beatWidth + width / 2 + 1.5F * a,
+                height / 2 + b / 2,
+                paint
+            )
+            canvas!!.drawRect(
+                deltaX + beatWidth + width / 2 + a / 2,
+                height / 2 - b / 2,
+                deltaX + beatWidth + width / 2 + 1.5F * a,
+                height / 2 - thickness / 2,
+                paint
+            )
+
+            path.moveTo(deltaX + width / 2 + 1.5F * a + beatWidth, height / 2 - b / 2)
+            path.lineTo(deltaX + width / 2 + 1.5F * a + 1.5F * beatWidth, height / 2 - b / 2)
+            path.lineTo(deltaX + width / 2 + 1.5F * a + beatWidth, height / 2 - thickness / 2)
+
+            path.moveTo(deltaX + 2F * beatWidth + width / 2 + 1.5F * a, height / 2 - b / 2)
+            path.lineTo(
+                deltaX + 2F * beatWidth + width / 2 + 1.5F * a,
+                height / 2 - thickness / 2
+            )
+            path.lineTo(deltaX + 1.5F * beatWidth + width / 2 + 1.5F * a, height / 2 - b / 2)
+
+            path.moveTo(deltaX + beatWidth + width / 2 + 1.5F * a, height / 2 + thickness / 2)
+            path.lineTo(
+                deltaX + 1.5F * beatWidth + width / 2 + 1.5F * a,
+                height / 2 - b / 2 + thickness
+            )
+            path.lineTo(
+                deltaX + 2F * beatWidth + width / 2 + 1.5F * a,
+                height / 2 + thickness / 2
+            )
+
+            canvas!!.drawRect(
+                deltaX + beatWidth + width / 2 + 1.5F * a,
+                height / 2 + thickness / 2,
+                deltaX + 2 * beatWidth + width / 2 + 1.5F * a,
+                height / 2 + b / 2,
+                paint
+            )
+
+            ///////////
+
+            canvas.drawPath(path, paint)
+
+            path.close()
+
+            deltaX -= 5F
+            if (deltaX <= -a - beatWidth) deltaX = 0.0F
+        }
+        else {
+            paint.color = Color.BLACK
+            paint.textSize = 70F
+
+            canvas!!.drawText(text, width/2 - paint.measureText(text)/2, height/2, paint)
+
+            println("Going set to false!!!")
+        }
+        invalidate()
+    }
+}
