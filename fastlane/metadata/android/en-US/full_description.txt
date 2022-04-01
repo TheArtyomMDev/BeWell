@@ -1,0 +1,1 @@
+This app measures your HRV and track your health. HRV method becomes more popular only in last ten years, however it was created in USSR to track astronauts' health.
