@@ -6,7 +6,7 @@ Coming soon!
 ## Third-party libraries
 - https://github.com/thomasnield/kotlin-statistics
 - https://github.com/material-components/material-components-android
-# Other info
+## Other info
 The idea of it was inspired by Welltory app.
 
 Based on at https://github.com/phishman3579/android-heart-rate-monitor
