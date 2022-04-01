@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="text_shadow">#7F000000</color>
+    <color name="soft_green">#1C5725</color>
+    <color name="soft_yellow">#7E631F</color>
+    <color name="soft_red">#782121</color>
+
+</resources>

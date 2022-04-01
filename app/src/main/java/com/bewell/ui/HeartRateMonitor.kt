@@ -1,4 +1,4 @@
-package com.example.sachin.heart
+package com.bewell.ui
 
 import android.Manifest
 import android.app.Activity
@@ -8,10 +8,13 @@ import android.content.pm.PackageManager
 import android.graphics.*
 import android.hardware.Camera
 import android.hardware.Camera.PreviewCallback
+import android.os.Build
 import android.os.Bundle
-import android.os.CountDownTimer
 import android.os.PowerManager
 import android.os.PowerManager.WakeLock
+import android.text.Layout
+import android.text.StaticLayout
+import android.text.TextPaint
 import android.util.AttributeSet
 import android.util.Log
 import android.util.TypedValue
@@ -21,9 +24,11 @@ import android.view.View
 import android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
 import android.widget.Button
 import android.widget.TextView
+import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
-import com.jjoe64.graphview.GraphView
-import com.jjoe64.graphview.series.DataPoint
+import androidx.core.content.res.ResourcesCompat
+import com.bewell.R
+import com.bewell.utils.ImageProcessing
 import org.nield.kotlinstatistics.standardDeviation
 import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.math.min
@@ -31,7 +36,6 @@ import kotlin.math.pow
 import kotlin.math.roundToInt
 import kotlin.math.sqrt
 import kotlin.system.exitProcess
-
 
 var going = false
 
@@ -41,7 +45,7 @@ class HeartRateMonitor : Activity() {
     }
 
     companion object {
-        var measureTimeInSec = 20
+        var measureTimeInSec = 0
         var generalStartTime: Long = 0
         var imgAvg = 0
     }
@@ -71,7 +75,6 @@ class HeartRateMonitor : Activity() {
     private var lastBeatTime: Long = 0
 
     private val averageArray = IntArray(averageArraySize)
-    private var beatsTime: MutableList<DataPoint> = ArrayList()
     private var generalBeatsTime: MutableList<Double> = ArrayList()
     private var intervalsBeatsTime: MutableList<Double> = ArrayList()
 
@@ -82,26 +85,14 @@ class HeartRateMonitor : Activity() {
         return Pair(modes.first().key, maxFreq)
     }
 
-    private val timer = object: CountDownTimer(measureTimeInSec*1000L, 1000) {
-        override fun onTick(millisUntilFinished: Long) {
-            if((millisUntilFinished/1000).toInt()%60 < 10)
-                timeText!!.text = "${(millisUntilFinished/60000).toInt()}:0${(millisUntilFinished/1000)%60}"
-            else timeText!!.text = "${(millisUntilFinished/60000).toInt()}:${(millisUntilFinished/1000)%60}"
-        }
-
-        override fun onFinish() {
-
-        }
-    }
-
-
-
     class CustomView2 @JvmOverloads constructor(context: Context,
                                                attrs: AttributeSet? = null, defStyleAttr: Int = 0)
         : View(context, attrs, defStyleAttr) {
 
         private val oval = RectF()
         private val paint = Paint()
+        private val primaryColour = TypedValue()
+        private val surfaceColour = TypedValue()
 
         private var angle = 0.0F
 
@@ -109,13 +100,16 @@ class HeartRateMonitor : Activity() {
         override fun onDraw(canvas: Canvas?) {
             super.onDraw(canvas)
 
+            context.theme.resolveAttribute(R.attr.colorPrimary, primaryColour, true)
+            context.theme.resolveAttribute(R.attr.colorSurface, surfaceColour, true)
+
             val width = measuredWidth.toFloat()
             val height = measuredHeight.toFloat()
             val radius = width/4
             val centerX = width / 2
             val centerY = height / 2
 
-            paint.color = Color.WHITE
+            paint.color = primaryColour.data
             paint.style = Paint.Style.STROKE
             paint.strokeWidth = 30F
             //canvas!!.drawCircle(width/2, height/2, radius, paint)
@@ -126,7 +120,7 @@ class HeartRateMonitor : Activity() {
                 centerY + radius)
             canvas!!.drawArc(oval, 270F, angle, false, paint)
 
-            angle = (360*(System.currentTimeMillis() - generalStartTime)/(1000F*measureTimeInSec))
+            angle = (360*(System.currentTimeMillis() - generalStartTime)/(1000F* measureTimeInSec))
 
             invalidate()
         }
@@ -136,11 +130,8 @@ class HeartRateMonitor : Activity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.main)
 
-        val permissionStatus = ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
-        if (permissionStatus != PackageManager.PERMISSION_GRANTED) {
-            startActivity(Intent(this, AskToGivePermissions::class.java))
-            this.finish()
-        }
+        measureTimeInSec = intent.extras?.get("measureTime").toString().toInt()
+
 
         //инициализация переменных
         preview = findViewById<View>(R.id.preview) as SurfaceView
@@ -151,7 +142,6 @@ class HeartRateMonitor : Activity() {
         imgavgtxt = findViewById(R.id.red_level_text)
         timeText = findViewById(R.id.time_text)
 
-        timer.start()
         cancelButton?.setOnClickListener {
             moveTaskToBack(true);
             exitProcess(-1)
@@ -243,7 +233,6 @@ class HeartRateMonitor : Activity() {
                 val bps = beats / totalTimeInSecs
                 val dpm = (bps * 60.0).toInt()
 
-                beatsTime.clear()
 
                 //если удары выходят за рамки разумного (<30 или >180)
                 if (dpm < 30 || dpm > 180) {
@@ -412,33 +401,38 @@ class CustomView @JvmOverloads constructor(context: Context,
     : View(context, attrs, defStyleAttr) {
 
     private val paint = Paint()
-    private val value = TypedValue()
-    private val value2 = TypedValue()
+    private val primaryColour = TypedValue()
+    private val surfaceColour = TypedValue()
     private val path = Path()
+    private val mTextPaint = TextPaint()
 
-    var a = 400F
-    var b = 400F
-    var thickness = 20F
-    var beatWidth = 120F
-    var deltaX = 0.0F
+    private var a = 400F
+    private var b = 400F
+    private var thickness = 20F
+    private var beatWidth = 120F
+    private var deltaX = 0.0F
+
+    private val mText = "Положите\nпалец на камеру"
 
     // Called when the view should render its content.
+    @RequiresApi(Build.VERSION_CODES.M)
     override fun onDraw(canvas: Canvas?) {
         super.onDraw(canvas)
 
         val width = measuredWidth.toFloat()
         val height = measuredHeight.toFloat()
-        val text = "Положите палец на камеру"
+
+        context.theme.resolveAttribute(R.attr.colorPrimary, primaryColour, true)
+        context.theme.resolveAttribute(R.attr.colorSurface, surfaceColour, true)
 
         if(going) {
 
             path.reset()
-            context.theme.resolveAttribute(R.attr.colorPrimary, value, true)
-            context.theme.resolveAttribute(R.attr.colorSurface, value2, true)
+
 
             var shader = LinearGradient(
                 width / 2 - a / 2, height / 2, width / 2 + a / 2, height / 2,
-                value2.data, value.data, Shader.TileMode.MIRROR
+                surfaceColour.data, primaryColour.data, Shader.TileMode.MIRROR
             )
 
             ///////
@@ -454,7 +448,7 @@ class CustomView @JvmOverloads constructor(context: Context,
             )
 
             paint.shader = null
-            paint.color = value2.data
+            paint.color = surfaceColour.data
             canvas.drawRect(
                 deltaX + width / 2 - a / 2,
                 height / 2 + thickness / 2,
@@ -550,12 +544,20 @@ class CustomView @JvmOverloads constructor(context: Context,
             if (deltaX <= -a - beatWidth) deltaX = 0.0F
         }
         else {
-            paint.color = Color.BLACK
-            paint.textSize = 70F
+            val textX = width/2 - mTextPaint.measureText(mText)/2
+            val textY = height/2
 
-            canvas!!.drawText(text, width/2 - paint.measureText(text)/2, height/2, paint)
+            mTextPaint.color = primaryColour.data
+            mTextPaint.textSize = 70F
+            mTextPaint.typeface = ResourcesCompat.getFont(context, R.font.montserrat_semi_bold)
 
-            println("Going set to false!!!")
+            val sb = StaticLayout.Builder.obtain(mText, 0, mText.length, mTextPaint, width.toInt())
+                .setAlignment(Layout.Alignment.ALIGN_CENTER)
+                .setIncludePad(false)
+            val mStaticLayout = sb.build()
+
+            canvas!!.translate(textX, textY);
+            mStaticLayout.draw(canvas);
         }
         invalidate()
     }

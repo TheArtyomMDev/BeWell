@@ -1,7 +1,6 @@
-package com.example.sachin.heart
+package com.bewell.utils
 
 import android.graphics.*
-import com.example.sachin.heart.ImageProcessing
 import java.io.ByteArrayOutputStream
 
 /**

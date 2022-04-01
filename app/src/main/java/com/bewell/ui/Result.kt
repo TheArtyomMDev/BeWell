@@ -1,4 +1,4 @@
-package com.example.sachin.heart
+package com.bewell.ui
 
 import android.os.Bundle
 import android.transition.AutoTransition
@@ -14,6 +14,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.bewell.R
 import com.google.android.material.appbar.CollapsingToolbarLayout
 
 class Result : AppCompatActivity() {
@@ -98,11 +99,14 @@ class CustomRecyclerAdapter(private val params: MutableList<Array<String>>) : Re
 
         when (param[3]) {
             "green" -> holder.card.setCardBackgroundColor(ContextCompat.getColor(
-                holder.itemView.context, R.color.soft_green))
+                holder.itemView.context, R.color.soft_green
+            ))
             "yellow" -> holder.card.setCardBackgroundColor(ContextCompat.getColor(
-                holder.itemView.context, R.color.soft_yellow))
+                holder.itemView.context, R.color.soft_yellow
+            ))
             "red" -> holder.card.setCardBackgroundColor(ContextCompat.getColor(
-                holder.itemView.context, R.color.soft_red))
+                holder.itemView.context, R.color.soft_red
+            ))
         }
 
     }

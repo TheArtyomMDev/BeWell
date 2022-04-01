@@ -1,4 +1,4 @@
-package com.example.sachin.heart
+package com.bewell.ui
 
 import android.Manifest
 import android.content.Intent
@@ -7,9 +7,9 @@ import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.annotation.RequiresApi
-import androidx.core.app.ActivityCompat
 import android.util.Log
 import android.widget.Button
+import com.bewell.R
 
 class AskToGivePermissions : AppCompatActivity() {
     private val REQUEST_CODE_CAMERA = 100
@@ -30,12 +30,13 @@ class AskToGivePermissions : AppCompatActivity() {
     //в зависимоти от результата выдачи разрешения запускаем основное приложение
     override fun onRequestPermissionsResult(requestCode: Int,
                                             permissions: Array<String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         when (requestCode) {
             REQUEST_CODE_CAMERA -> {
                 // If request is cancelled, the result arrays are empty.
                 if ((grantResults.isNotEmpty() &&
                             grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-                    startActivity(Intent(this, HeartRateMonitor::class.java))
+                    startActivity(Intent(this, StartActivity::class.java))
                 }
                 return
             }
