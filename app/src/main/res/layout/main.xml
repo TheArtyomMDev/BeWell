@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:app="http://schemas.android.com/apk/res-auto"
 	xmlns:tools="http://schemas.android.com/tools"
 	android:id="@+id/layout2"
@@ -8,125 +8,63 @@
 	android:orientation="vertical">
 
 
-	<TextView
-		android:id="@+id/red_level_text"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:text="RedLevel Appears Here"
-		android:visibility="gone"
-		app:layout_constraintBottom_toTopOf="@+id/preview"
-		app:layout_constraintStart_toStartOf="parent"
-		tools:visibility="gone" />
-
-	<TextView
-		android:id="@+id/time_text"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:fontFamily="@font/montserrat_semi_bold"
-		android:gravity="center"
-		android:shadowColor="@color/text_shadow"
-		android:shadowDx="1"
-		android:shadowDy="5"
-		android:shadowRadius="10"
-		android:text="time"
-		android:textColor="#000000"
-		android:textSize="25sp"
-		android:visibility="gone"
-		app:layout_constraintBottom_toTopOf="@+id/preview"
-		app:layout_constraintEnd_toStartOf="@+id/result_info_text"
-		app:layout_constraintStart_toStartOf="parent"
-		app:layout_constraintTop_toBottomOf="@+id/canvas"
-		tools:visibility="gone" />
-
-	<Button
-		android:id="@+id/cancel_button"
-		android:layout_width="82dp"
-		android:layout_height="38dp"
-		android:background="@drawable/cancel_button"
-		android:visibility="gone"
-		app:layout_constraintBottom_toTopOf="@+id/preview"
-		app:layout_constraintEnd_toEndOf="parent"
-		app:layout_constraintStart_toEndOf="@+id/result_info_text"
-		app:layout_constraintTop_toBottomOf="@+id/canvas"
-		tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck"
-		tools:visibility="gone" />
-
-	<TextView
-		android:id="@+id/advise_text"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:fontFamily="@font/montserrat_light"
-		android:gravity="center"
-		android:text="Положите палец на камеру"
-		android:textColor="#000000"
-		android:textSize="20sp"
-		android:visibility="gone"
-		app:layout_constraintEnd_toEndOf="parent"
-		app:layout_constraintStart_toStartOf="parent"
-		app:layout_constraintTop_toBottomOf="@+id/preview" />
-
-	<TextView
-		android:id="@+id/info_text"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:layout_marginTop="124dp"
-		android:fontFamily="@font/montserrat_semi_bold"
-		android:gravity="center"
-		android:text="Идёт измерение"
-		android:textColor="#000000"
-		android:textSize="20sp"
-		android:visibility="gone"
-		app:layout_constraintEnd_toEndOf="parent"
-		app:layout_constraintHorizontal_bias="0.539"
-		app:layout_constraintStart_toStartOf="parent"
-		app:layout_constraintTop_toTopOf="parent" />
-
 	<view
 		android:id="@+id/canvas"
 		class="com.bewell.ui.CustomView"
-		android:layout_width="fill_parent"
-		android:layout_height="202dp"
-		app:layout_constraintBottom_toTopOf="@+id/result_info_text"
-		app:layout_constraintEnd_toEndOf="parent"
-		app:layout_constraintHorizontal_bias="0.0"
-		app:layout_constraintStart_toStartOf="parent"
-		app:layout_constraintTop_toTopOf="parent" />
-
-	<SurfaceView
-		android:id="@+id/preview"
-		android:layout_width="fill_parent"
-		android:layout_height="475dp"
-		app:layout_constraintBottom_toBottomOf="parent"
-		app:layout_constraintEnd_toEndOf="parent"
-		app:layout_constraintHorizontal_bias="0.0"
-		app:layout_constraintStart_toStartOf="parent" />
-
-	<view
-		android:id="@+id/canvas2"
-		class="com.bewell.ui.HeartRateMonitor$CustomView2"
-		android:layout_width="200dp"
-		android:layout_height="200dp"
-		app:layout_constraintBottom_toBottomOf="parent"
-		app:layout_constraintEnd_toEndOf="parent"
-		app:layout_constraintHorizontal_bias="0.497"
-		app:layout_constraintStart_toStartOf="parent"
-		app:layout_constraintTop_toTopOf="@+id/preview" />
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_weight="7"
+		tools:layout_conversion_absoluteHeight="202dp"
+		tools:layout_conversion_absoluteWidth="411dp"
+		tools:layout_editor_absoluteX="0dp"
+		tools:layout_editor_absoluteY="0dp" />
 
 	<TextView
 		android:id="@+id/result_info_text"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:layout_marginBottom="28dp"
-		android:gravity="center"
-		android:text="-- bpm"
+		android:layout_gravity="center"
 		android:fontFamily="@font/montserrat_semi_bold"
-		android:textSize="30sp"
+		android:text="-- bpm"
+		android:layout_marginTop="10dp"
+		android:layout_marginBottom="10dp"
 		android:textColor="?attr/colorPrimary"
-		android:visibility="visible"
-		app:layout_constraintBottom_toTopOf="@+id/preview"
-		app:layout_constraintEnd_toEndOf="parent"
-		app:layout_constraintHorizontal_bias="0.498"
-		app:layout_constraintStart_toStartOf="parent"
-		tools:visibility="visible" />
+		android:textSize="30sp"
+		tools:layout_conversion_absoluteHeight="40dp"
+		tools:layout_conversion_absoluteWidth="104dp"
+		tools:layout_editor_absoluteX="154dp"
+		tools:layout_editor_absoluteY="202dp" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+	<androidx.constraintlayout.widget.ConstraintLayout
+		android:layout_width="fill_parent"
+		android:layout_height="fill_parent"
+		android:layout_weight="5">
+
+		<SurfaceView
+			android:id="@+id/preview"
+			android:layout_width="fill_parent"
+			android:layout_height="fill_parent"
+			app:layout_constraintBottom_toBottomOf="parent"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintHorizontal_bias="0.329"
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintTop_toTopOf="parent"
+			tools:layout_conversion_absoluteHeight="475dp"
+			tools:layout_conversion_absoluteWidth="411dp" />
+
+		<view
+			android:id="@+id/canvas2"
+			class="com.bewell.ui.HeartRateMonitorActivity$CustomView2"
+			android:layout_width="fill_parent"
+			android:layout_height="fill_parent"
+			app:layout_constraintBottom_toBottomOf="parent"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintTop_toTopOf="parent"
+			tools:layout_conversion_absoluteHeight="200dp"
+			tools:layout_conversion_absoluteWidth="200dp" />
+
+	</androidx.constraintlayout.widget.ConstraintLayout>
+
+
+</LinearLayout>

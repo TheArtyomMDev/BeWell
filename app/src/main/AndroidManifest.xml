@@ -13,9 +13,9 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/heart"
         android:supportsRtl="true"
-        android:theme="@style/Theme.Material3.DayNight.NoActionBar" >
+        android:theme="@style/AppTheme" >
         <activity
-            android:name=".ui.StartActivity"
+            android:name=".view.StartMeasureView"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -24,13 +24,13 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ui.AskToGivePermissions"
+            android:name=".view.GivePermissionsView"
             android:exported="false" />
         <activity
-            android:name=".ui.Result"
-            android:exported="true" />
+            android:name=".view.ResultView"
+            android:exported="false" />
         <activity
-            android:name=".ui.HeartRateMonitor"
+            android:name=".ui.HeartRateMonitorActivity"
             android:exported="true"
             android:noHistory="true" >
         </activity>
