@@ -11,6 +11,7 @@ import android.view.SurfaceHolder
 import android.view.WindowManager
 import android.widget.TextView
 import androidx.core.content.ContextCompat.startActivity
+import com.bewell.R
 import com.bewell.base.MainContract
 import com.bewell.model.HRVMeasureModel.param
 import com.bewell.storage.Preferences
@@ -261,7 +262,7 @@ class HRVMeasurePresenter: MainContract.Presenter<HRVMeasureView> {
                     "%",
                     5.1,
                     8.3,
-                    "Коэффициент вариабельности. Основной показатель здоровья сердца"
+                    view!!.resources.getString(R.string.cv_info)
                 )
             )
 
@@ -282,7 +283,7 @@ class HRVMeasurePresenter: MainContract.Presenter<HRVMeasureView> {
                     elem.name,
                     arrayListOf(
                         "${elem.value} ${elem.dimension}",
-                        "Норма ${elem.minValue}-${elem.maxValue}",
+                        "${view!!.resources.getString(R.string.norm)} ${elem.minValue}-${elem.maxValue}",
                         colour,
                         elem.description
                     )

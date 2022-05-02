@@ -13,6 +13,7 @@
         android:fontFamily="@font/montserrat_light"
         android:text="@string/choose_time"
         android:textSize="50sp"
+        android:padding="20dp"
         app:layout_constraintBottom_toTopOf="@+id/times_card"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

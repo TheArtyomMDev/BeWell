@@ -33,6 +33,8 @@ class ResultView : AppCompatActivity() {
 
         presenter.setupCollapsingToolbar(binding.collapsingToolbar)
         presenter.setupResultsRecyclerView(binding.resultsRecyclerView)
+
+        presenter.uploadMeasureInfo()
     }
 
     override fun onDestroy() {

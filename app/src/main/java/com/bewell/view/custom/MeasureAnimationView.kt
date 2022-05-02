@@ -31,9 +31,7 @@ class MeasureAnimationView @JvmOverloads constructor(context: Context,
     private var deltaX = 0.0F
 
 
-
-
-    private val mText = "Положите\nпалец на камеру"
+    private val mText = resources.getString(R.string.put_finger_on_camera)
 
     // Called when the view should render its content.
     @RequiresApi(Build.VERSION_CODES.M)

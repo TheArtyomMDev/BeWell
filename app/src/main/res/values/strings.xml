@@ -1,9 +1,18 @@
 <resources>
     <string name="app_name">BeWell</string>
-    <string name="default_text">heart_default</string>
-    <string name="title_activity_scrolling">ScrollingActivity</string>
+
+    <string name="choose_time">Choose\nmeasure time</string>
+
     <string name="fast_time">Fast (2.5 min)\nThe fastest time for measuring</string>
     <string name="balance_time">Balance (5 min)\nOptimal time for measuring</string>
     <string name="accurate_time">Accurate time (7.5 min)\nThe most accurate way for measuring</string>
-    <string name="choose_time">Choose\nmeasure time</string>
+
+    <string name="put_finger_on_camera">Put\n your finger on camera</string>
+
+    <string name="measure_results">Measure results</string>
+    <string name="show_more">Show more</string>
+    <string name="show_less">Show less</string>
+    <string name="norm">Norm is</string>
+
+    <string name="cv_info">Coefficient of variability. The main indicator of heart health</string>
 </resources>

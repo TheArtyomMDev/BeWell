@@ -13,24 +13,23 @@
         >
 
         <com.google.android.material.appbar.CollapsingToolbarLayout
-            app:toolbarId="@+id/collapsing_toolbar_2"
             android:id="@+id/collapsing_toolbar"
+            style="?attr/collapsingToolbarLayoutLargeStyle"
 
             android:layout_width="match_parent"
             android:layout_height="150dp"
-            app:layout_scrollFlags="scroll|exitUntilCollapsed"
-            app:title="Результаты измерений"
-            style="?attr/collapsingToolbarLayoutLargeStyle"
             app:contentScrim="?attr/colorPrimaryContainer"
-            app:titleCollapseMode="scale">
+            app:layout_scrollFlags="scroll|exitUntilCollapsed"
+            app:title="@string/measure_results"
+            app:titleCollapseMode="scale"
+            app:toolbarId="@+id/collapsing_toolbar_2">
 
             <com.google.android.material.appbar.MaterialToolbar
 
                 android:id="@+id/toolbar"
-                android:layout_height="?attr/actionBarSize"
                 android:layout_width="match_parent"
-                app:layout_collapseMode="pin"
-                />
+                android:layout_height="?attr/actionBarSize"
+                app:layout_collapseMode="pin" />
         </com.google.android.material.appbar.CollapsingToolbarLayout>
 
     </com.google.android.material.appbar.AppBarLayout>
