@@ -9,9 +9,9 @@
 
 
 	<view
-		android:id="@+id/canvas"
-		class="com.bewell.ui.CustomView"
-		android:layout_width="match_parent"
+		android:id="@+id/beats"
+		class="com.bewell.view.custom.MeasureAnimationView"
+		android:layout_width="fill_parent"
 		android:layout_height="wrap_content"
 		android:layout_weight="7"
 		tools:layout_conversion_absoluteHeight="202dp"
@@ -20,14 +20,13 @@
 		tools:layout_editor_absoluteY="0dp" />
 
 	<TextView
-		android:id="@+id/result_info_text"
+		android:id="@+id/bpm"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:layout_gravity="center"
-		android:fontFamily="@font/montserrat_semi_bold"
-		android:text="-- bpm"
 		android:layout_marginTop="10dp"
 		android:layout_marginBottom="10dp"
+		android:fontFamily="@font/montserrat_semi_bold"
 		android:textColor="?attr/colorPrimary"
 		android:textSize="30sp"
 		tools:layout_conversion_absoluteHeight="40dp"
@@ -35,36 +34,24 @@
 		tools:layout_editor_absoluteX="154dp"
 		tools:layout_editor_absoluteY="202dp" />
 
-	<androidx.constraintlayout.widget.ConstraintLayout
+	<FrameLayout
 		android:layout_width="fill_parent"
-		android:layout_height="fill_parent"
+		android:layout_height="wrap_content"
 		android:layout_weight="5">
 
 		<SurfaceView
 			android:id="@+id/preview"
 			android:layout_width="fill_parent"
-			android:layout_height="fill_parent"
-			app:layout_constraintBottom_toBottomOf="parent"
-			app:layout_constraintEnd_toEndOf="parent"
-			app:layout_constraintHorizontal_bias="0.329"
-			app:layout_constraintStart_toStartOf="parent"
-			app:layout_constraintTop_toTopOf="parent"
-			tools:layout_conversion_absoluteHeight="475dp"
-			tools:layout_conversion_absoluteWidth="411dp" />
+			android:layout_height="fill_parent" />
 
 		<view
+			class="com.bewell.view.custom.MeasureProgressView"
 			android:id="@+id/canvas2"
-			class="com.bewell.ui.HeartRateMonitorActivity$CustomView2"
 			android:layout_width="fill_parent"
 			android:layout_height="fill_parent"
-			app:layout_constraintBottom_toBottomOf="parent"
-			app:layout_constraintEnd_toEndOf="parent"
-			app:layout_constraintStart_toStartOf="parent"
-			app:layout_constraintTop_toTopOf="parent"
-			tools:layout_conversion_absoluteHeight="200dp"
-			tools:layout_conversion_absoluteWidth="200dp" />
+			android:layout_margin="50dp" />
 
-	</androidx.constraintlayout.widget.ConstraintLayout>
+	</FrameLayout>
 
 
 </LinearLayout>

@@ -30,7 +30,7 @@
             android:name=".view.ResultView"
             android:exported="false" />
         <activity
-            android:name=".ui.HeartRateMonitorActivity"
+            android:name=".view.HRVMeasureView"
             android:exported="true"
             android:noHistory="true" >
         </activity>
