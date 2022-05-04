@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.bewell" >
+    package="com.bewell">
 
     <uses-feature android:name="android.hardware.camera" />
     <uses-feature android:name="android.hardware.camera.flash" />
@@ -13,9 +13,12 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/heart"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme" >
+        android:theme="@style/AppTheme">
         <activity
-            android:name=".view.StartMeasureView"
+            android:name=".view.SignupView"
+            android:exported="false" />
+        <activity
+            android:name=".view.LoginView"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -23,6 +26,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".view.StartMeasureView"
+            android:exported="true" />
         <activity
             android:name=".view.GivePermissionsView"
             android:exported="false" />
@@ -32,8 +38,7 @@
         <activity
             android:name=".view.HRVMeasureView"
             android:exported="true"
-            android:noHistory="true" >
-        </activity>
+            android:noHistory="true" />
     </application>
 
 </manifest>

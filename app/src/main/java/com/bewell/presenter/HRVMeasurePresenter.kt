@@ -214,7 +214,7 @@ class HRVMeasurePresenter: MainContract.Presenter<HRVMeasureView> {
                     "мс",
                     30.0,
                     96.0,
-                    "Стандартное отклонение интервалов. Показывает состояние вегетативной нервной системы"
+                    view!!.resources.getString(R.string.sdnn_info)
                 ),
                 param(
                     MRR * 1000,
@@ -222,7 +222,7 @@ class HRVMeasurePresenter: MainContract.Presenter<HRVMeasureView> {
                     "мс",
                     660.0,
                     1370.0,
-                    "Средняя длительность интервалов. Оценивает напряженность организма в целом"
+                    view!!.resources.getString(R.string.mrr_info)
                 ),
                 param(
                     MxDMn * 1000,
@@ -230,7 +230,7 @@ class HRVMeasurePresenter: MainContract.Presenter<HRVMeasureView> {
                     "мс",
                     120.0,
                     450.0,
-                    "Размах интервалов. Чем выше, тем ниже напряжение"
+                    view!!.resources.getString(R.string.mxdmn_info)
                 ),
                 param(
                     Mo * 1000,
@@ -238,7 +238,7 @@ class HRVMeasurePresenter: MainContract.Presenter<HRVMeasureView> {
                     "мс",
                     660.0,
                     1370.0,
-                    "Самая частая длина интервалов. Отвечает за стабильность процессов в организме"
+                    view!!.resources.getString(R.string.mode_info)
                 ),
                 param(
                     RMSSD * 1000,
@@ -246,7 +246,7 @@ class HRVMeasurePresenter: MainContract.Presenter<HRVMeasureView> {
                     "мс",
                     15.0,
                     90.0,
-                    "Корень из среднего значения квадратов различий между соседними интервалами. Оценка активности парасимпатического отдела"
+                    view!!.resources.getString(R.string.rmssd_info)
                 ),
                 param(
                     AMo,
@@ -254,7 +254,7 @@ class HRVMeasurePresenter: MainContract.Presenter<HRVMeasureView> {
                     "%",
                     26.0,
                     50.0,
-                    "Амплитуда моды. Показывает активность парасимпатического отдела"
+                    view!!.resources.getString(R.string.amo50_info)
                 ),
                 param(
                     CV,

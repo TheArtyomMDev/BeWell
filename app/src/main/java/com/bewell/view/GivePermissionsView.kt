@@ -21,7 +21,6 @@ class GivePermissionsView : AppCompatActivity() {
     private lateinit var binding: ActivityAskToGivePermissionsBinding
     private lateinit var presenter: GivePermissionsPresenter
 
-    @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityAskToGivePermissionsBinding.inflate(layoutInflater)

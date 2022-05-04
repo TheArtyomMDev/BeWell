@@ -1,13 +1,13 @@
 <resources>
     <string name="app_name">BeWell</string>
 
-    <string name="choose_time">Choose\nmeasure time</string>
+    <string name="choose_time">Choose\nmeasure\ntime</string>
 
     <string name="fast_time">Fast (2.5 min)\nThe fastest time for measuring</string>
     <string name="balance_time">Balance (5 min)\nOptimal time for measuring</string>
     <string name="accurate_time">Accurate time (7.5 min)\nThe most accurate way for measuring</string>
 
-    <string name="put_finger_on_camera">Put\n your finger on camera</string>
+    <string name="put_finger_on_camera">Put\nyour finger on camera</string>
 
     <string name="measure_results">Measure results</string>
     <string name="show_more">Show more</string>
@@ -15,4 +15,21 @@
     <string name="norm">Norm is</string>
 
     <string name="cv_info">Coefficient of variability. The main indicator of heart health</string>
+    <string name="sdnn_info">Standard deviation of intervals. Shows the state of the autonomic nervous system</string>
+    <string name="mrr_info">The average duration of the intervals. Evaluates the tension of the body as a whole</string>
+    <string name="mxdmn_info">Range of intervals. Than it higher, then the stress lower</string>
+    <string name="mode_info">The most common interval length. Responsible for the stability of processes in the body</string>
+    <string name="rmssd_info">The root of the mean of squared differences between adjacent intervals. Evaluation of the activity of the parasympathetic department</string>
+    <string name="amo50_info">Mode amplitude. Shows the activity of the parasympathetic division</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="login">Login</string>
+    <string name="no_account_yet_hint">No account yet? Create one</string>
+    <string name="repeat_password">Repeat password</string>
+    <string name="create_account">Create account</string>
+    <string name="has_account_hint">Already has account? Log in</string>
+    <string name="logo">Logo</string>
+    <string name="email_input_error">Invalid email</string>
+    <string name="password_input_error">Password lengthing should be more than 6 characters</string>
+    <string name="passwords_not_match_error">Passwords do not match</string>
 </resources>

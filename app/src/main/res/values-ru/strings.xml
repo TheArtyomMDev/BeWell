@@ -1,13 +1,12 @@
 <resources>
-    <string name="app_name">BeWell</string>
 
-    <string name="choose_time">Выберите\nвремя измерения</string>
+    <string name="choose_time">Выберите\nвремя\nизмерения</string>
 
     <string name="fast_time">Быстро (2.5 минуты)\nСамый быстрый способ измерения</string>
     <string name="balance_time">Баланс (5 минут)\nОптимальное сочетание\nвремени и точности</string>
     <string name="accurate_time">Точно (7.5 минут)\nПодходит для очень точных измерений</string>
 
-    <string name="put_finger_on_camera">Put\n your finger on camera</string>
+    <string name="put_finger_on_camera">Положите\nпалец на камеру</string>
 
     <string name="measure_results">Результаты измерения</string>
     <string name="show_more">Больше</string>
@@ -15,4 +14,20 @@
     <string name="norm">Норма</string>
 
     <string name="cv_info">Коэффициент вариабельности. Основной показатель здоровья сердца</string>
+    <string name="sdnn_info">Стандартное отклонение интервалов. Показывает состояние вегетативной нервной системы</string>
+    <string name="mrr_info">Средняя длительность интервалов. Оценивает напряженность организма в целом</string>
+    <string name="mxdmn_info">Размах интервалов. Чем выше, тем ниже напряжение</string>
+    <string name="mode_info">Самая частая длина интервалов. Отвечает за стабильность процессов в организме</string>
+    <string name="rmssd_info">Корень из среднего значения квадратов различий между соседними интервалами. Оценка активности парасимпатического отдела</string>
+    <string name="amo50_info">Амплитуда моды. Показывает активность парасимпатического отдела</string>
+    <string name="password">Пароль</string>
+    <string name="email">Почта</string>
+    <string name="login">Войти</string>
+    <string name="no_account_yet_hint">Ещё нет аккаунта? Создать</string>
+    <string name="repeat_password">Повторите пароль</string>
+    <string name="create_account">Создать аккаунт</string>
+    <string name="has_account_hint">Уже есть аккаунт? Войти</string>
+    <string name="email_input_error">Неправильный адрес почты</string>
+    <string name="passwords_not_match_error">Пароли не совпадают</string>
+    <string name="password_input_error">Длина пароля должна быть больше 6 символов</string>
 </resources>

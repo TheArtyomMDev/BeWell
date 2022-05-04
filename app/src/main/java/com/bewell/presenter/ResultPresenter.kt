@@ -10,7 +10,7 @@ import com.bewell.ui.ResultRecyclerAdapter
 import com.bewell.utils.Constants.TAG
 import com.bewell.view.ResultView
 import com.google.android.material.appbar.CollapsingToolbarLayout
-import com.google.firebase.firestore.FieldPath
+import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -60,8 +60,7 @@ class ResultPresenter: MainContract.Presenter<ResultView>  {
             out[item[0]] = item[1]
         }
 
-
-        db.collection("measure").document("Lada")
+        db.collection("measure").document(Firebase.auth.currentUser!!.email.toString())
             .set(hashMapOf(
                 currentDate.toString() to out
             ), SetOptions.merge())
