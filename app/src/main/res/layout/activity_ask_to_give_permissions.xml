@@ -13,7 +13,7 @@
         android:layout_marginTop="20dp"
         android:fontFamily="@font/montserrat_semi_bold"
         android:gravity="center"
-        android:text="Чтобы использовать приложение, вам нужно выдать разрешение на использование камеры"
+        android:text="@string/give_camera_permission"
         android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -33,7 +33,7 @@
         android:id="@+id/give_permissions_button"
         android:layout_width="176dp"
         android:layout_height="64dp"
-        android:text="Выдать"
+        android:text="@string/grant_permission"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/camera_info_text" />

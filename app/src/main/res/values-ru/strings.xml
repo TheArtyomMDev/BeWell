@@ -30,4 +30,6 @@
     <string name="email_input_error">Неправильный адрес почты</string>
     <string name="passwords_not_match_error">Пароли не совпадают</string>
     <string name="password_input_error">Длина пароля должна быть больше 6 символов</string>
+    <string name="give_camera_permission">Чтобы использовать приложение, вам нужно выдать разрешение на использование камеры</string>
+    <string name="grant_permission">Выдать</string>
 </resources>
