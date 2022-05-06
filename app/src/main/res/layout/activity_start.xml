@@ -11,11 +11,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/montserrat_light"
-        android:paddingEnd="20dp"
         android:text="@string/choose_time"
         android:textSize="50sp"
         app:layout_constraintBottom_toTopOf="@+id/times_card"
-        app:layout_constraintStart_toStartOf="@+id/times_card"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <com.google.android.material.card.MaterialCardView
@@ -41,20 +41,20 @@
             <com.google.android.material.radiobutton.MaterialRadioButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="top"
+                android:gravity="center_vertical"
                 android:text="@string/fast_time" />
 
 
             <com.google.android.material.radiobutton.MaterialRadioButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="top"
+                android:gravity="center_vertical"
                 android:text="@string/balance_time" />
 
             <com.google.android.material.radiobutton.MaterialRadioButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="top"
+                android:gravity="center_vertical"
                 android:text="@string/accurate_time" />
         </RadioGroup>
     </com.google.android.material.card.MaterialCardView>

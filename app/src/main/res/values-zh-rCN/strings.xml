@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">BeWell</string>
+    <string name="choose_time">选择测量时长</string>
+    <string name="fast_time">快速（2.5 分钟）\n最短的测量时长</string>
+    <string name="balance_time">中等（5 分钟）\n推荐的测量时长</string>
+    <string name="accurate_time">精确（7.5 分钟）\n最精确的测量方式</string>
+    <string name="put_finger_on_camera">请将手指覆盖在摄像头上</string>
+    <string name="measure_results">测量结果</string>
+    <string name="show_more">展开更多</string>
+    <string name="show_less">折叠</string>
+    <string name="email">电子邮箱</string>
+    <string name="password">密码</string>
+    <string name="login">登录</string>
+    <string name="no_account_yet_hint">没有帐户？立即注册</string>
+    <string name="repeat_password">重复密码</string>
+    <string name="create_account">创建账户</string>
+    <string name="has_account_hint">已有账户？立即登录</string>
+    <string name="email_input_error">无效的电子邮箱</string>
+    <string name="password_input_error">密码应不少于 6 个字符</string>
+    <string name="passwords_not_match_error">密码和重复密码不相同</string>
+    <string name="give_camera_permission">为使用本应用，你必须授予相机权限。</string>
+    <string name="grant_permission">授予</string>
+    <string name="norm">正常值为</string>
+    <string name="cv_info">变异性系数（Coefficient of variability, CV）。衡量心脏健康的主要指标</string>
+    <string name="sdnn_info">心跳间隔的标准差（Standard deviation of intervals）。显示自主神经系统的状态</string>
+    <string name="mrr_info">心跳间隔的平均时间（Average duration of the intervals）。评价身体整体的紧张程度</string>
+    <string name="mxdmn_info">心跳间隔的极差（Range of intervals）。它越高，则说明压力越低</string>
+    <string name="mode_info">心跳间隔的众数（Most common interval length）。体现体内过程的稳定性</string>
+    <string name="rmssd_info">相邻心跳间隙方差均值的平方根（Root of the mean of squared differences between adjacent intervals）。可用于评价副交感神经的活动状态</string>
+    <string name="amo50_info">心率的模式振幅。显示副交感神经的活动</string>
+</resources>
