@@ -22,64 +22,54 @@
             android:src="@drawable/ic_launcher_foreground"
             tools:ignore="ImageContrastCheck" />
 
-        <!-- Address Label -->
-
-
-        <!--  Email Label -->
         <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/email_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:layout_marginTop="8dp">
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp">
 
-            <EditText
-                android:id="@+id/email_input"
+            <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:autofillHints=""
                 android:hint="@string/email"
                 android:inputType="textEmailAddress"
-                tools:ignore="SpeakableTextPresentCheck"
-                android:autofillHints="" />
+                tools:ignore="SpeakableTextPresentCheck" />
         </com.google.android.material.textfield.TextInputLayout>
 
-
-        <!-- mobile number -->
-
-        <!-- Password Label -->
         <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/password_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:layout_marginTop="8dp">
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp">
 
-            <EditText
-                android:id="@+id/password_input"
+            <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:autofillHints=""
                 android:hint="@string/password"
                 android:inputType="textPassword"
-                tools:ignore="SpeakableTextPresentCheck"
-                android:autofillHints="" />
+                tools:ignore="SpeakableTextPresentCheck" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- Password Re-enter Label -->
         <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/repeat_password_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:layout_marginTop="8dp">
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp">
 
-            <EditText
-                android:id="@+id/repeat_password_input"
+            <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:autofillHints=""
                 android:hint="@string/repeat_password"
                 android:inputType="textPassword"
-                tools:ignore="SpeakableTextPresentCheck"
-                android:autofillHints="" />
+                tools:ignore="SpeakableTextPresentCheck" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- Signup Button -->
         <Button
             android:id="@+id/signup_button"
             android:layout_width="fill_parent"

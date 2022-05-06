@@ -21,7 +21,7 @@ class SignupView : AppCompatActivity() {
         presenter.attachView(this)
 
         binding.signupButton.setOnClickListener {
-            presenter.signup(binding.emailInput, binding.passwordInput, binding.repeatPasswordInput,
+            presenter.signup(binding.emailLayout, binding.passwordLayout, binding.repeatPasswordLayout,
                 this, binding.signupButton, binding.loginText, binding.signupProgress)
         }
 

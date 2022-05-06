@@ -25,7 +25,6 @@ class StartMeasureView : AppCompatActivity() {
         presenter.checkPermissions(this)
 
         binding.timesRadioGroup.setOnCheckedChangeListener{ _, checkedId ->
-            //if(checkedId == R.id.b1) println("1 pressed!!")
             presenter.onTimeChosen(binding.confirmButton, binding.timesRadioGroup, checkedId)
         }
 

@@ -22,7 +22,7 @@ class LoginView : AppCompatActivity() {
         presenter.setup(this)
 
         binding.loginButton.setOnClickListener {
-            presenter.login(binding.emailInput, binding.passwordInput,
+            presenter.login(binding.emailLayout, binding.passwordLayout,
                 this, binding.loginButton, binding.signupText, binding.loginProgress)
         }
 

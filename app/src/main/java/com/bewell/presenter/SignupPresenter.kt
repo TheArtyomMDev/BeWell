@@ -16,6 +16,7 @@ import com.bewell.view.SignupView
 import com.bewell.view.StartMeasureView
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.material.snackbar.Snackbar
+import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.FirebaseNetworkException
 import com.google.firebase.auth.*
 import com.google.firebase.auth.ktx.auth
@@ -34,20 +35,20 @@ class SignupPresenter: MainContract.Presenter<SignupView> {
     }
 
 
-    fun signup(emailInput: EditText, passwordInput: EditText, repeatPasswordInput: EditText,
+    fun signup(emailLayout: TextInputLayout, passwordLayout: TextInputLayout, repeatPasswordLayout: TextInputLayout,
                activity: Activity, signupButton: Button, loginText: TextView, signupProgress: ProgressBar) {
         Log.d(TAG, "Signup started")
 
+        val email = emailLayout.editText!!.text.toString()
+        val password = passwordLayout.editText!!.text.toString()
+
         //проверка почты и пароля на корректность
-        if (!validate(emailInput, passwordInput, repeatPasswordInput)) {
+        if (!validate(emailLayout, passwordLayout, repeatPasswordLayout)) {
             return
         }
 
         //прогресс регистрации
         showProgressDialog(signupButton, loginText, signupProgress)
-
-        val email = emailInput.text.toString()
-        val password = passwordInput.text.toString()
 
         val auth = Firebase.auth
 
@@ -109,32 +110,35 @@ class SignupPresenter: MainContract.Presenter<SignupView> {
     }
 
     //проверка почты и пароля на корректность
-    fun validate(emailInput: EditText, passwordInput: EditText, repeatPasswordInput: EditText): Boolean {
+    fun validate(emailLayout: TextInputLayout, passwordLayout: TextInputLayout, repeatPasswordLayout: TextInputLayout): Boolean {
         var valid = true
 
-        val email = emailInput.text.toString()
-        val password = passwordInput.text.toString()
-        val reEnterPassword = repeatPasswordInput.text.toString()
+        val email = emailLayout.editText!!.text.toString()
+        val password = passwordLayout.editText!!.text.toString()
+        val reEnterPassword = repeatPasswordLayout.editText!!.text.toString()
 
         if (email.isEmpty() || !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            emailInput.error = view!!.resources.getString(R.string.email_input_error)
+            emailLayout.error = view!!.resources.getString(R.string.email_input_error)
             valid = false
         } else {
-            emailInput.error = null
+            emailLayout.error = null
+            emailLayout.isErrorEnabled = false
         }
 
         if (password.isEmpty() || password.length < 6) {
-            passwordInput.error = view!!.resources.getString(R.string.password_input_error)
+            passwordLayout.error = view!!.resources.getString(R.string.password_input_error)
             valid = false
         } else {
-            passwordInput.error = null
+            passwordLayout.error = null
+            passwordLayout.isErrorEnabled = false
         }
 
         if (reEnterPassword != password) {
-            repeatPasswordInput.error = view!!.resources.getString(R.string.passwords_not_match_error)
+            repeatPasswordLayout.error = view!!.resources.getString(R.string.passwords_not_match_error)
             valid = false
         } else {
-            repeatPasswordInput.error = null
+            repeatPasswordLayout.error = null
+            repeatPasswordLayout.isErrorEnabled = false
         }
 
         return valid

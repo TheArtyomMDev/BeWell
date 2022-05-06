@@ -15,6 +15,7 @@ import com.bewell.view.LoginView
 import com.bewell.view.SignupView
 import com.bewell.view.StartMeasureView
 import com.google.android.material.snackbar.Snackbar
+import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.FirebaseNetworkException
 import com.google.firebase.auth.*
 import com.google.firebase.auth.ktx.auth
@@ -42,19 +43,19 @@ class LoginPresenter: MainContract.Presenter<LoginView> {
         }
     }
 
-    fun login(emailInput: EditText, passwordInput: EditText, activity: Activity,
+    fun login(emailLayout: TextInputLayout, passwordLayout: TextInputLayout, activity: Activity,
               loginButton: Button, signupText: TextView, loginProgress: ProgressBar) {
         Log.d(TAG, "Login")
 
-        if (!validate(emailInput, passwordInput)) {
+        val email = emailLayout.editText!!.text.toString()
+        val password = passwordLayout.editText!!.text.toString()
+
+        if (!validate(emailLayout, passwordLayout)) {
             return
         }
 
         //прогресс логина
         showProgressDialog(loginButton, signupText, loginProgress)
-
-        val email = emailInput.text.toString()
-        val password = passwordInput.text.toString()
 
         //проверка по базе
         auth.signInWithEmailAndPassword(email, password).addOnCompleteListener { task ->
@@ -116,27 +117,28 @@ class LoginPresenter: MainContract.Presenter<LoginView> {
 
     }
 
-    fun validate(emailInput: EditText, passwordInput: EditText): Boolean {
+    fun validate(emailLayout: TextInputLayout, passwordLayout: TextInputLayout): Boolean {
         var valid = true
-        var tried = false
 
-        val email = emailInput.text.toString()
-        val password = passwordInput.text.toString()
+        val email = emailLayout.editText!!.text.toString()
+        val password = passwordLayout.editText!!.text.toString()
 
         //проверка на почту
         if (email.isEmpty() || !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            emailInput.error = view!!.resources.getString(com.bewell.R.string.email_input_error)
+            emailLayout.error = view!!.resources.getString(com.bewell.R.string.email_input_error)
             valid = false
         } else {
-            emailInput.error = null
+            emailLayout.error = null
+            emailLayout.isErrorEnabled = false
         }
 
         //проверка пароля на длину
         if (password.isEmpty() || password.length < 6) {
-            passwordInput.error = view!!.resources.getString(com.bewell.R.string.password_input_error)
+            passwordLayout.error = view!!.resources.getString(com.bewell.R.string.password_input_error)
             valid = false
         } else {
-            passwordInput.error = null
+            passwordLayout.error = null
+            passwordLayout.isErrorEnabled = false
         }
 
         return valid
