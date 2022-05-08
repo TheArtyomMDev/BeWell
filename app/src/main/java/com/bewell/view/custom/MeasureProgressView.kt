@@ -36,7 +36,7 @@ class MeasureProgressView @JvmOverloads constructor(context: Context,
         var measureTimeInSec =
             sharedPreferences.getInt(PREF_MEASURE_TIME_IN_SEC, 0)
 
-        println(generalStartTimeInMilliSec)
+        //println(generalStartTimeInMilliSec)
 
         context.theme.resolveAttribute(com.google.android.material.R.attr.colorPrimary, primaryColour, true)
         context.theme.resolveAttribute(com.google.android.material.R.attr.colorSurface, surfaceColour, true)

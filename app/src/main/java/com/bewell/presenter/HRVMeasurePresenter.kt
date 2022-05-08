@@ -21,6 +21,15 @@ import com.bewell.ui.*
 import com.bewell.utils.Constants
 import com.bewell.utils.Constants.TAG
 import com.bewell.utils.ImageProcessing
+import com.bewell.utils.MathStats
+import com.bewell.utils.MathStats.getAMo50
+import com.bewell.utils.MathStats.getCV
+import com.bewell.utils.MathStats.getIN
+import com.bewell.utils.MathStats.getIntervals
+import com.bewell.utils.MathStats.getMxDMn
+import com.bewell.utils.MathStats.getRMSSD
+import com.bewell.utils.MathStats.modeOf
+import com.bewell.utils.MathStats.roundDecimalTo
 import com.bewell.view.HRVMeasureView
 import com.bewell.view.ResultView
 import org.nield.kotlinstatistics.standardDeviation
@@ -60,7 +69,7 @@ class HRVMeasurePresenter: MainContract.Presenter<HRVMeasureView> {
 
     private val averageArray = IntArray(averageArraySize)
     private var generalBeatsTime: MutableList<Double> = ArrayList()
-    private var intervalsBeatsTime: MutableList<Double> = ArrayList()
+    private var intervalsBeatsTime: Array<Double> = arrayOf()
 
     private val surfaceCallback: SurfaceHolder.Callback = object : SurfaceHolder.Callback {
 
@@ -154,7 +163,7 @@ class HRVMeasurePresenter: MainContract.Presenter<HRVMeasureView> {
             val bps = beats / totalTimeInSecs
             val dpm = (bps * 60.0).toInt()
 
-            //если удары выходят за рамки разумного (<30 или >180)
+            //если bpm выходит за рамки разумного (<30 или >180)
             if (dpm < 30 || dpm > 180) {
                 startTime = System.currentTimeMillis()
                 beats = 0.0
@@ -183,33 +192,24 @@ class HRVMeasurePresenter: MainContract.Presenter<HRVMeasureView> {
         }
         if ((endTime - generalStartTimeInMilliSec) / 1000.0 > measureTimeInSec) {
 
-            var toAdd: Double?
-            for (i in 1 until generalBeatsTime.size) {
-                toAdd = ((generalBeatsTime[i] - generalBeatsTime[i - 1]) * 100).roundToInt() / 100.0
-                if (toAdd < 1.2 && toAdd > 0.6) intervalsBeatsTime.add(toAdd)
-            }
+            intervalsBeatsTime = getIntervals(generalBeatsTime.toTypedArray())
 
-            //val SD = calculateSD(intervalsBeatsTime.toDoubleArray())
-            val SD = (intervalsBeatsTime.standardDeviation() * 1000).toInt() / 1000.0
-            val MRR = (intervalsBeatsTime.average() * 1000).toInt() / 1000.0
-            val MxDMn =
-                ((intervalsBeatsTime.maxOrNull()!! - intervalsBeatsTime.minOrNull()!!) * 1000).toInt() / 1000.0
-            val (Mo, freq) = modeOf(intervalsBeatsTime.toTypedArray())
-            val AMo = ((freq.toDouble() / intervalsBeatsTime.size) * 10000).toInt() / 100.0
-            val CV = (10000 * SD / MRR).toInt() / 100.0
+            println(intervalsBeatsTime.standardDeviation())
 
-            var sumOfDiff = 0.0
-            var numOfDiff = 0.0
-            for (i in 1 until intervalsBeatsTime.size) {
-                sumOfDiff += (intervalsBeatsTime[i] - intervalsBeatsTime[i - 1]).pow(2)
-                numOfDiff += 1.0
-            }
-            val RMSSD = (sqrt(sumOfDiff / numOfDiff) * 100).toInt() / 100.0
+            val SDNN = intervalsBeatsTime.standardDeviation().roundDecimalTo(4)
+            val MRR = intervalsBeatsTime.average().roundDecimalTo(4)
+            val MxDMn = getMxDMn(intervalsBeatsTime).roundDecimalTo(4)
+            val Mode = modeOf(intervalsBeatsTime).first.roundDecimalTo(4)
+            val AMo50 = getAMo50(intervalsBeatsTime).roundDecimalTo(2)
+            val CV = getCV(intervalsBeatsTime).roundDecimalTo(2)
+            val RMSSD = getRMSSD(intervalsBeatsTime).roundDecimalTo(4)
+            val IN = getIN(intervalsBeatsTime).roundDecimalTo(4)
+
             val intent = Intent(view!!.applicationContext, ResultView::class.java)
 
             val values = listOf(
                 param(
-                    SD * 1000,
+                    SDNN * 1000,
                     "SDNN",
                     "мс",
                     30.0,
@@ -233,7 +233,7 @@ class HRVMeasurePresenter: MainContract.Presenter<HRVMeasureView> {
                     view!!.resources.getString(R.string.mxdmn_info)
                 ),
                 param(
-                    Mo * 1000,
+                    Mode * 1000,
                     "Mo",
                     "мс",
                     660.0,
@@ -249,7 +249,7 @@ class HRVMeasurePresenter: MainContract.Presenter<HRVMeasureView> {
                     view!!.resources.getString(R.string.rmssd_info)
                 ),
                 param(
-                    AMo,
+                    AMo50,
                     "AMo50",
                     "%",
                     26.0,
@@ -319,7 +319,7 @@ class HRVMeasurePresenter: MainContract.Presenter<HRVMeasureView> {
         this.previewHolder = holder
         this.bpmText = bpmText
         this.measureTimeInSec = sharedPreferences.getInt(
-            Preferences.PREF_MEASURE_TIME_IN_SEC, 0)
+            Preferences.PREF_MEASURE_TIME_IN_SEC, 150)
         //this.generalStartTimeInMilliSec = sharedPreferences.getLong(
             //Preferences.PREF_GENERAL_START_TIME_IN_MILLI_SEC, 0)
     }
@@ -332,17 +332,12 @@ class HRVMeasurePresenter: MainContract.Presenter<HRVMeasureView> {
 
     fun onPause() {
         wakeLock.release()
-        camera!!.setPreviewCallback(null)
-        camera!!.stopPreview()
-        camera!!.release()
+        camera!!.let {
+            it.setPreviewCallback(null)
+            it.stopPreview()
+            it.release()
+        }
         camera = null
-    }
-
-    private fun <T> modeOf(a: Array<T>): Pair<T, Int> {
-        val sortedByFreq = a.groupBy { it }.entries.sortedByDescending { it.value.size }
-        val maxFreq = sortedByFreq.first().value.size
-        val modes = sortedByFreq.takeWhile { it.value.size == maxFreq }
-        return Pair(modes.first().key, maxFreq)
     }
 
     private fun updateProcessing(x: AtomicBoolean) {

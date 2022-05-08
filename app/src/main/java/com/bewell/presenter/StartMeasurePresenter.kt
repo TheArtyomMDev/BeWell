@@ -38,7 +38,7 @@ class StartMeasurePresenter: MainContract.Presenter<StartMeasureView> {
         confirmButton.isEnabled = true
 
         measureTimeInSec = when(order) {
-            0 -> 150
+            0 -> 10
             1 -> 300
             2 -> 450
             else -> throw Exception("Wrong id of radiobutton")

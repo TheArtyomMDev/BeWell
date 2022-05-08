@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">BeWell</string>
+    <string name="app_name" translatable="false">BeWell</string>
 
     <string name="choose_time">Choose\nmeasure\ntime</string>
 
@@ -28,10 +28,11 @@
     <string name="repeat_password">Repeat password</string>
     <string name="create_account">Create account</string>
     <string name="has_account_hint">Already has account? Log in</string>
-    <string name="logo">Logo</string>
+    <string name="logo" translatable="false">Logo</string>
     <string name="email_input_error">Invalid email</string>
     <string name="password_input_error">Password length should be more than 6 characters</string>
     <string name="passwords_not_match_error">Passwords do not match</string>
     <string name="give_camera_permission">To use this app you need to grant camera permission</string>
     <string name="grant_permission">Grant</string>
+    <string name="confirm" translatable="false">OK</string>
 </resources>

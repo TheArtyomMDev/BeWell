@@ -31,7 +31,7 @@ class ResultView : AppCompatActivity() {
         presenter = ResultPresenter()
         presenter.attachView(this)
 
-        presenter.setupCollapsingToolbar(binding.collapsingToolbar)
+        //presenter.setupCollapsingToolbar(binding.collapsingToolbar)
         presenter.setupResultsRecyclerView(binding.resultsRecyclerView)
 
         presenter.uploadMeasureInfo()

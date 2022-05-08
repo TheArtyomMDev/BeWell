@@ -4,14 +4,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.AskToGivePermissions">
+    tools:context=".view.GivePermissionsView">
 
     <TextView
         android:id="@+id/camera_info_text"
         android:layout_width="260dp"
         android:layout_height="148dp"
         android:layout_marginTop="20dp"
-        android:fontFamily="@font/montserrat_semi_bold"
         android:gravity="center"
         android:text="@string/give_camera_permission"
         android:textSize="20sp"
@@ -36,5 +35,6 @@
         android:text="@string/grant_permission"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/camera_info_text" />
+        app:layout_constraintTop_toBottomOf="@+id/camera_info_text"
+        style="@style/button"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

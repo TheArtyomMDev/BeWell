@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">BeWell</string>
     <string name="choose_time">选择测量时长</string>
     <string name="fast_time">快速（2.5 分钟）\n最短的测量时长</string>
     <string name="balance_time">中等（5 分钟）\n推荐的测量时长</string>

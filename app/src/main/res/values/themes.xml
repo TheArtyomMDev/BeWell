@@ -1,5 +1,7 @@
 <resources>
 
-    <style name="AppTheme" parent="Theme.Material3.DayNight.NoActionBar" />
+    <style name="AppTheme" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="fontFamily">@font/montserrat_light</item>
+    </style>
 
 </resources>

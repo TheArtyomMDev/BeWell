@@ -4,7 +4,7 @@
 
     <string name="fast_time">Быстро (2.5 минуты)\nСамый быстрый способ измерения</string>
     <string name="balance_time">Баланс (5 минут)\nОптимальное сочетание\nвремени и точности</string>
-    <string name="accurate_time">Точно (7.5 минут)\nПодходит для очень точных измерений</string>
+    <string name="accurate_time">Точно (7.5 минут)\nПодходит для очень точных\nизмерений</string>
 
     <string name="put_finger_on_camera">Положите\nпалец на камеру</string>
 
