@@ -30,20 +30,13 @@ class ResultPresenter: MainContract.Presenter<ResultView>  {
         view = null
     }
 
-    fun setupCollapsingToolbar(collapsingToolbar: CollapsingToolbarLayout) {
-        val tf = ResourcesCompat.getFont(view!!.applicationContext, R.font.montserrat_semi_bold)
-        collapsingToolbar.setCollapsedTitleTypeface(tf)
-        collapsingToolbar.setExpandedTitleTypeface(tf)
-    }
-
     fun setupResultsRecyclerView(resultsRecyclerView: RecyclerView) {
         val myAdapter = ResultRecyclerAdapter(view!!.applicationContext)
         resultsRecyclerView.layoutManager = LinearLayoutManager(view!!.applicationContext)
         resultsRecyclerView.adapter = myAdapter
 
         myAdapter.addData(view!!.intent)
-        myAdapter.addText(view!!.resources.getString(R.string.show_more),
-            view!!.resources.getString(R.string.show_less))
+        myAdapter.addText(view!!.resources.getString(R.string.show_more), view!!.resources.getString(R.string.show_less))
 
         params = myAdapter.params
     }

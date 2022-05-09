@@ -21,23 +21,19 @@ import com.bewell.ui.*
 import com.bewell.utils.Constants
 import com.bewell.utils.Constants.TAG
 import com.bewell.utils.ImageProcessing
-import com.bewell.utils.MathStats
-import com.bewell.utils.MathStats.getAMo50
-import com.bewell.utils.MathStats.getCV
-import com.bewell.utils.MathStats.getIN
-import com.bewell.utils.MathStats.getIntervals
-import com.bewell.utils.MathStats.getMxDMn
-import com.bewell.utils.MathStats.getRMSSD
-import com.bewell.utils.MathStats.modeOf
-import com.bewell.utils.MathStats.roundDecimalTo
+import com.bewell.utils.Math.getAMo50
+import com.bewell.utils.Math.getCV
+import com.bewell.utils.Math.getIN
+import com.bewell.utils.Math.getIntervals
+import com.bewell.utils.Math.getModeOf
+import com.bewell.utils.Math.getMxDMn
+import com.bewell.utils.Math.getRMSSD
+import com.bewell.utils.Math.roundDecimalTo
 import com.bewell.view.HRVMeasureView
 import com.bewell.view.ResultView
 import org.nield.kotlinstatistics.standardDeviation
 import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.math.min
-import kotlin.math.pow
-import kotlin.math.roundToInt
-import kotlin.math.sqrt
 
 class HRVMeasurePresenter: MainContract.Presenter<HRVMeasureView> {
     private var view: HRVMeasureView? = null
@@ -190,20 +186,27 @@ class HRVMeasurePresenter: MainContract.Presenter<HRVMeasureView> {
             startTime = System.currentTimeMillis()
             beats = 0.0
         }
-        if ((endTime - generalStartTimeInMilliSec) / 1000.0 > measureTimeInSec) {
+        if ((endTime - generalStartTimeInMilliSec) / 1000.0 >= measureTimeInSec) {
+            processing.set(false)
 
             intervalsBeatsTime = getIntervals(generalBeatsTime.toTypedArray())
 
-            println(intervalsBeatsTime.standardDeviation())
-
-            val SDNN = intervalsBeatsTime.standardDeviation().roundDecimalTo(4)
-            val MRR = intervalsBeatsTime.average().roundDecimalTo(4)
-            val MxDMn = getMxDMn(intervalsBeatsTime).roundDecimalTo(4)
-            val Mode = modeOf(intervalsBeatsTime).first.roundDecimalTo(4)
+            val SDNN = intervalsBeatsTime.standardDeviation().roundDecimalTo(3)
+            val MRR = intervalsBeatsTime.average().roundDecimalTo(3)
+            val MxDMn = getMxDMn(intervalsBeatsTime).roundDecimalTo(3)
+            val Mode = getModeOf(intervalsBeatsTime).first.roundDecimalTo(3)
             val AMo50 = getAMo50(intervalsBeatsTime).roundDecimalTo(2)
             val CV = getCV(intervalsBeatsTime).roundDecimalTo(2)
-            val RMSSD = getRMSSD(intervalsBeatsTime).roundDecimalTo(4)
-            val IN = getIN(intervalsBeatsTime).roundDecimalTo(4)
+            val RMSSD = getRMSSD(intervalsBeatsTime).roundDecimalTo(3)
+            val IN = getIN(intervalsBeatsTime).roundDecimalTo(3)
+
+            println(SDNN)
+            println(MRR)
+            println(MxDMn)
+            println(Mode)
+            println(AMo50)
+            println(CV)
+            println(RMSSD)
 
             val intent = Intent(view!!.applicationContext, ResultView::class.java)
 
@@ -263,6 +266,14 @@ class HRVMeasurePresenter: MainContract.Presenter<HRVMeasureView> {
                     5.1,
                     8.3,
                     view!!.resources.getString(R.string.cv_info)
+                ),
+                param(
+                    IN,
+                    "IN",
+                    "points",
+                    30.0,
+                    140.0,
+                    view!!.resources.getString(R.string.in_info)
                 )
             )
 
