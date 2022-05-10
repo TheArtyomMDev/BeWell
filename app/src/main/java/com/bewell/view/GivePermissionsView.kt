@@ -1,20 +1,9 @@
 package com.bewell.view
 
-import android.Manifest
-import android.content.Intent
-import android.content.pm.PackageManager
-import android.os.Build
 import android.os.Bundle
-import android.util.Log
-import android.widget.Button
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
-import com.bewell.R
 import com.bewell.databinding.ActivityAskToGivePermissionsBinding
-import com.bewell.databinding.ActivityResultBinding
 import com.bewell.presenter.GivePermissionsPresenter
-import com.bewell.presenter.ResultPresenter
-import com.bewell.utils.Constants.REQUEST_CODE_CAMERA
 
 class GivePermissionsView : AppCompatActivity() {
 

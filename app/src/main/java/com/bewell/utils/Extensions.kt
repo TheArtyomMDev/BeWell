@@ -1,4 +1,4 @@
-package com.nikhilpanju.fabfilter.utils
+package com.bewell.utils
 
 import android.animation.TimeInterpolator
 import android.animation.ValueAnimator

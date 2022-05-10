@@ -1,16 +1,13 @@
 package com.bewell.ui
 
-import androidx.core.animation.doOnStart
 import android.animation.ValueAnimator
 import android.content.Context
-import android.content.Intent
-
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AccelerateDecelerateInterpolator
-
 import androidx.core.animation.doOnEnd
+import androidx.core.animation.doOnStart
 import androidx.core.content.ContextCompat
 import androidx.core.view.doOnLayout
 import androidx.core.view.doOnPreDraw
@@ -23,16 +20,17 @@ import com.bewell.utils.dp
 import com.bewell.utils.getValueAnimator
 import com.bewell.utils.screenWidth
 
-/** List Model. A sample model that only contains id */
-//data class MainListModel(val id: Int)
 
-class ResultRecyclerAdapter(context: Context) : RecyclerView.Adapter<ResultRecyclerAdapter.ListViewHolder>() {
+/** List Model. A sample model that only contains id */
+data class MainListModel(val id: Int)
+
+class CustomRecyclerAdapter(context: Context) : RecyclerView.Adapter<CustomRecyclerAdapter.ListViewHolder>() {
 
     private val originalBg: Int = ContextCompat.getColor(context, R.color.list_item_bg_collapsed)
     private val expandedBg: Int = ContextCompat.getColor(context, R.color.list_item_bg_expanded)
 
-    private val listItemHorizontalPadding: Float = context.resources.getDimension(R.dimen.list_item_horizontal_padding)
-    private val listItemVerticalPadding: Float = context.resources.getDimension(R.dimen.list_item_vertical_padding)
+    private val listItemHorizontalPadding: Float = 16f
+    private val listItemVerticalPadding: Float = 24f
     private val originalWidth = context.screenWidth - 48.dp
     private val expandedWidth = context.screenWidth - 24.dp
     private var originalHeight = -1 // will be calculated dynamically
@@ -55,31 +53,14 @@ class ResultRecyclerAdapter(context: Context) : RecyclerView.Adapter<ResultRecyc
     private var expandedModel: MainListModel? = null
     private var isScaledDown = false
 
-    val params = mutableListOf<Array<String>>()
-
-
     ///////////////////////////////////////////////////////////////////////////
     // Methods
     ///////////////////////////////////////////////////////////////////////////
 
-    fun addData(intent: Intent) {
-        val bundle = intent.extras
-        if (bundle != null) {
-            for (key in bundle.keySet()) {
-                val list = intent.getStringArrayListExtra(key)
-                params.add(arrayOf(key, list!![0], list[1], list[2], list[3]))
-            }
-        }
-    }
+    override fun getItemCount(): Int = adapterList.size
 
-    override fun getItemCount(): Int = params.size
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ListViewHolder {
-        val itemView =
-            LayoutInflater.from(parent.context)
-                .inflate(R.layout.item_list, parent, false)
-        return ListViewHolder(itemView)
-    }
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ListViewHolder =
+        ListViewHolder(inflater.inflate(R.layout.item_list, parent, false))
 
     override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
         super.onAttachedToRecyclerView(recyclerView)
@@ -88,55 +69,21 @@ class ResultRecyclerAdapter(context: Context) : RecyclerView.Adapter<ResultRecyc
 
     override fun onBindViewHolder(holder: ListViewHolder, position: Int) {
         val model = adapterList[position]
-        val param = params[position]
 
-        println(position)
-
-        //holder.textViewLarge.text = param[0]
-        //holder.textViewMiddle.text = param[1]
-        //holder.textViewSmall.text = param[2]
-
-        //holder.descriptionText.text = param[4]
-        //println(param[4])
-
-        /*
-        when (param[3]) {
-            "green" -> holder.card.setCardBackgroundColor(
-                ContextCompat.getColor(
-                    holder.card.context, R.color.soft_green
-                ))
-            "yellow" -> holder.card.setCardBackgroundColor(
-                ContextCompat.getColor(
-                    holder.card.context, R.color.soft_yellow
-                ))
-            "red" -> holder.card.setCardBackgroundColor(
-                ContextCompat.getColor(
-                    holder.card.context, R.color.soft_red
-                ))
-        }
-
-         */
-
-        //expandItem(holder, model == expandedModel, animate = false)
-        //scaleDownItem(holder, position, isScaledDown)
+        expandItem(holder, model == expandedModel, animate = false)
+        scaleDownItem(holder, position, isScaledDown)
 
         holder.cardContainer.setOnClickListener {
-
-
-
             if (expandedModel == null) {
 
                 // expand clicked view
                 expandItem(holder, expand = true, animate = true)
                 expandedModel = model
-
-
             } else if (expandedModel == model) {
 
                 // collapse clicked view
                 expandItem(holder, expand = false, animate = true)
                 expandedModel = null
-
             } else {
 
                 //если нужно не collapse-ить предыдущую при открытии следущей, то нужно завести
@@ -153,8 +100,6 @@ class ResultRecyclerAdapter(context: Context) : RecyclerView.Adapter<ResultRecyc
                 expandItem(holder, expand = true, animate = true)
                 expandedModel = model
             }
-
-
         }
     }
 
@@ -163,13 +108,8 @@ class ResultRecyclerAdapter(context: Context) : RecyclerView.Adapter<ResultRecyc
             val animator = getValueAnimator(
                 expand, listItemExpandDuration, AccelerateDecelerateInterpolator()
             ) { progress -> setExpandProgress(holder, progress) }
-
-            if (expand) animator.doOnStart {
-                holder.expandView.visibility = View.VISIBLE
-            }
-            else animator.doOnEnd {
-                holder.expandView.visibility = View.GONE
-            }
+            if (expand) animator.doOnStart { holder.expandView.isVisible = true }
+            else animator.doOnEnd { holder.expandView.isVisible = false }
 
             animator.start()
         } else {
@@ -185,7 +125,6 @@ class ResultRecyclerAdapter(context: Context) : RecyclerView.Adapter<ResultRecyc
 
         // get originalHeight & expandedHeight if not gotten before
         if (expandedHeight < 0) {
-            //println(expandedHeight)
             expandedHeight = 0 // so that this block is only called once
 
             holder.cardContainer.doOnLayout { view ->
@@ -199,8 +138,6 @@ class ResultRecyclerAdapter(context: Context) : RecyclerView.Adapter<ResultRecyc
                 view.doOnPreDraw {
                     expandedHeight = view.height
                     holder.expandView.isVisible = false
-                    println(originalHeight)
-                    println(expandedHeight)
                 }
             }
         }
@@ -227,7 +164,7 @@ class ResultRecyclerAdapter(context: Context) : RecyclerView.Adapter<ResultRecyc
     private inline val LinearLayoutManager.visibleItemsRange: IntRange
         get() = findFirstVisibleItemPosition()..findLastVisibleItemPosition()
 
-    fun setScaleDownAnimator(isScaledDown: Boolean): ValueAnimator {
+    fun getScaleDownAnimator(isScaledDown: Boolean): ValueAnimator {
         val lm = recyclerView.layoutManager as LinearLayoutManager
 
         val animator = getValueAnimator(isScaledDown,
@@ -290,11 +227,5 @@ class ResultRecyclerAdapter(context: Context) : RecyclerView.Adapter<ResultRecyc
         val cardContainer: View = itemView.findViewById(R.id.card_container)
         val scaleContainer: View = itemView.findViewById(R.id.scale_container)
         val listItemFg: View = itemView.findViewById(R.id.list_item_fg)
-        //val card: CardView = itemView.findViewById(R.id.card)
-
-        //val textViewLarge: TextView = itemView.findViewById(R.id.textViewLarge)
-        //val textViewMiddle: TextView = itemView.findViewById(R.id.textViewMiddle)
-        //val textViewSmall: TextView = itemView.findViewById(R.id.textViewSmall)
-        //val descriptionText: TextView = itemView.findViewById(R.id.description_text)
     }
 }
