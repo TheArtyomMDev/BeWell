@@ -39,7 +39,6 @@
                     android:paddingTop="10dp"
                     android:paddingBottom="5dp"
                     android:text="TextView"
-                    android:textSize="40sp"
                     app:layout_constraintBottom_toTopOf="@+id/description_text"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />

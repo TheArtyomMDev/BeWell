@@ -36,7 +36,7 @@ class ResultPresenter: MainContract.Presenter<ResultView>  {
         resultsRecyclerView.adapter = myAdapter
 
         myAdapter.addData(view!!.intent)
-        myAdapter.addText(view!!.resources.getString(R.string.show_more), view!!.resources.getString(R.string.show_less))
+        //myAdapter.addText(view!!.resources.getString(R.string.show_more), view!!.resources.getString(R.string.show_less))
 
         params = myAdapter.params
     }
