@@ -6,7 +6,7 @@
 
     <style name="header" parent="AppTheme">
         <item name="fontFamily">@font/montserrat_semi_bold</item>
-        <item name="android:textSize">50sp</item>
+        <item name="android:textSize">45sp</item>
     </style>
 
     <style name="collapsedHeaderToolbar" parent="Widget.Material3.CollapsingToolbar.Medium">

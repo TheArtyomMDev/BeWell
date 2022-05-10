@@ -6,6 +6,10 @@
     <color name="soft_yellow">#FAE09E</color>
     <color name="soft_red">#FA9E9E</color>
 
+    <color name="list_item_bg_collapsed">#E2FAFF</color>
+    <color name="list_item_bg_expanded">@android:color/white</color>
+    <color name="list_item_fg">#aa7CDDE7</color>
+
 
     <color name="windowBackground">#51D1E2</color>
 
