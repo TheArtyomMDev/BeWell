@@ -32,5 +32,5 @@
     <string name="password_input_error">Длина пароля должна быть больше 6 символов</string>
     <string name="give_camera_permission">Чтобы использовать приложение, вам нужно выдать разрешение на использование камеры</string>
     <string name="grant_permission">Выдать</string>
-    <string name="in_info">Индекс напряжения</string>
+    <string name="in_info">Индекс напряжения. Основной показатель состояния адаптации</string>
 </resources>

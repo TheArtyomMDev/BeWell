@@ -84,19 +84,18 @@ too. layout_gravity="center_horizontal" is a lot simpler.
 
                 <LinearLayout
                     android:id="@+id/expand_view"
-                    android:layout_width="match_parent"
+                    android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/textViewSmall"
                     android:layout_alignStart="@+id/textViewLarge"
                     android:layout_marginTop="16dp"
-                    android:layout_marginEnd="16dp"
                     android:orientation="vertical"
                     android:visibility="gone"
-                    tools:visibility="gone">
+                    tools:visibility="visible">
 
                     <TextView
                         android:id="@+id/description_text"
-                        android:layout_width="wrap_content"
+                        android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
                         android:text="TextView" />
                 </LinearLayout>

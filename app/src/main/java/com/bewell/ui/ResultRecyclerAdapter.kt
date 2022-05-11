@@ -42,6 +42,8 @@ class ResultRecyclerAdapter(context: Context) : RecyclerView.Adapter<ResultRecyc
     private var originalHeight = -1 // will be calculated dynamically
     private var expandedHeight = -1 // will be calculated dynamically
 
+    var  expandedHeights = MutableList(20) {300}
+
     var animationPlaybackSpeed: Double = 0.8
 
     // filteredItems is a static field to simulate filtering of random items
@@ -124,10 +126,15 @@ class ResultRecyclerAdapter(context: Context) : RecyclerView.Adapter<ResultRecyc
 
 
 
-        expandItem(holder, model == expandedModel, animate = false)
-        scaleDownItem(holder, position, isScaledDown)
+        //expandItem(holder, model == expandedModel, animate = false)
+        //scaleDownItem(holder, position, isScaledDown)
 
         holder.cardContainer.setOnClickListener {
+            println(expandedHeights[position])
+            //println(expandedHeights[holder.layoutPosition])
+
+            //holder.expandView.isVisible = true
+
             if (expandedModel == null) {
 
                 // expand clicked view
@@ -154,6 +161,8 @@ class ResultRecyclerAdapter(context: Context) : RecyclerView.Adapter<ResultRecyc
                 expandItem(holder, expand = true, animate = true)
                 expandedModel = model
             }
+
+
         }
     }
 
@@ -174,7 +183,7 @@ class ResultRecyclerAdapter(context: Context) : RecyclerView.Adapter<ResultRecyc
         } else {
 
             // show expandView only if we have expandedHeight (onViewAttached)
-            holder.expandView.isVisible = expand && expandedHeight >= 0
+            holder.expandView.isVisible = expand && expandedHeights[holder.layoutPosition] >= 0
             setExpandProgress(holder, if (expand) 1f else 0f)
         }
     }
@@ -184,6 +193,7 @@ class ResultRecyclerAdapter(context: Context) : RecyclerView.Adapter<ResultRecyc
 
         //val pos = holder.layoutPosition
 
+        /*
         // get originalHeight & expandedHeight if not gotten before
         if (expandedHeight < 0) {
             //Log.d(TAG, "View at layout position $pos attached")
@@ -204,12 +214,37 @@ class ResultRecyclerAdapter(context: Context) : RecyclerView.Adapter<ResultRecyc
                 }
             }
         }
+
+
+         */
+
+        //Log.d(TAG, "View at layout position $pos attached")
+
+
+        holder.cardContainer.doOnLayout { view ->
+            if(originalHeight < 0) originalHeight = view.height
+
+            // show expandView and record expandedHeight in next layout pass
+            // (doOnPreDraw) and hide it immediately. We use onPreDraw because
+            // it's called after layout is done. doOnNextLayout is called during
+            // layout phase which causes issues with hiding expandView.
+            holder.expandView.isVisible = true
+            view.doOnPreDraw {
+                if (expandedHeights[holder.layoutPosition] == 300)
+                    expandedHeights[holder.layoutPosition]  = view.height
+
+                println("expanded view ${holder.layoutPosition} height is ${view.height}")
+                holder.expandView.isVisible = false
+                expandItem(holder, adapterList[holder.layoutPosition] == expandedModel, animate = false)
+                scaleDownItem(holder, holder.layoutPosition, isScaledDown)
+            }
+        }
     }
 
     private fun setExpandProgress(holder: ListViewHolder, progress: Float) {
-        if (expandedHeight > 0 && originalHeight > 0) {
+        if (expandedHeights[holder.layoutPosition] > 0 && originalHeight > 0) {
             holder.cardContainer.layoutParams.height =
-                (originalHeight + (expandedHeight - originalHeight) * progress).toInt()
+                (originalHeight + (expandedHeights[holder.layoutPosition] - originalHeight) * progress).toInt()
         }
         holder.cardContainer.layoutParams.width =
             (originalWidth + (expandedWidth - originalWidth) * progress).toInt()
@@ -257,7 +292,7 @@ class ResultRecyclerAdapter(context: Context) : RecyclerView.Adapter<ResultRecyc
         val itemExpanded = position >= 0 && adapterList[position] == expandedModel
         holder.cardContainer.layoutParams.apply {
             width = ((if (itemExpanded) expandedWidth else originalWidth) * (1 - 0.1f * progress)).toInt()
-            height = ((if (itemExpanded) expandedHeight else originalHeight) * (1 - 0.1f * progress)).toInt()
+            height = ((if (itemExpanded) expandedHeights[holder.layoutPosition] else originalHeight) * (1 - 0.1f * progress)).toInt()
 //            log("width=$width, height=$height [${"%.2f".format(progress)}]")
         }
         holder.cardContainer.requestLayout()
