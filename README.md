@@ -10,9 +10,14 @@ Coming soon!
 Which data we are collecting?
 - Time of each measure
 - Measure results 
-- Email (used as a key to upload your results)
+- Email 
 
-A bit later I will add option to disable uploading results if you don't want this.
+How we are using this data?
+- Email used only as a key to keep all your measure results
+- Time used as a key of each measure
+- Measure results used in our anonymous statistics to improve our app algorithms
+
+*A bit later I will add option to disable uploading results & sending stats.
 ## Other info
 The idea of it was inspired by Welltory app.
 
