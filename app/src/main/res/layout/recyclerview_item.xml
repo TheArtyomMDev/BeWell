@@ -11,7 +11,7 @@ too. layout_gravity="center_horizontal" is a lot simpler.
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <androidx.cardview.widget.CardView
+    <com.google.android.material.card.MaterialCardView
         android:id="@+id/card"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -53,6 +53,7 @@ too. layout_gravity="center_horizontal" is a lot simpler.
                     android:layout_alignBottom="@+id/textViewSmall"
                     android:layout_marginStart="6dp"
                     android:layout_toEndOf="@+id/arrow"
+                    android:gravity="center"
                     android:text="Meas"
                     android:textSize="30sp" />
 
@@ -63,6 +64,7 @@ too. layout_gravity="center_horizontal" is a lot simpler.
                     android:layout_alignParentTop="true"
                     android:layout_alignParentEnd="true"
                     android:layout_marginTop="@dimen/list_item_vertical_padding"
+                    android:background="@drawable/rectangle"
                     android:text="TextView"
                     android:textSize="25sp" />
 
@@ -91,7 +93,14 @@ too. layout_gravity="center_horizontal" is a lot simpler.
                     android:layout_marginTop="16dp"
                     android:orientation="vertical"
                     android:visibility="gone"
-                    tools:visibility="visible">
+                    tools:visibility="gone">
+
+                    <View
+                        android:id="@+id/divider"
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginBottom="10dp"
+                        android:background="?android:attr/listDivider" />
 
                     <TextView
                         android:id="@+id/description_text"
@@ -110,5 +119,5 @@ too. layout_gravity="center_horizontal" is a lot simpler.
                 android:visibility="visible"
                 tools:visibility="gone" />
         </FrameLayout>
-    </androidx.cardview.widget.CardView>
+    </com.google.android.material.card.MaterialCardView>
 </FrameLayout>

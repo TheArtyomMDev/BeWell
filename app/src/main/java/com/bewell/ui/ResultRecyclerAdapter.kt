@@ -1,17 +1,19 @@
 package com.bewell.ui
 
-import androidx.core.animation.doOnStart
 import android.animation.ValueAnimator
 import android.content.Context
 import android.content.Intent
 import android.util.Log
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.widget.TextView
+import androidx.annotation.ColorInt
 import androidx.cardview.widget.CardView
 import androidx.core.animation.doOnEnd
+import androidx.core.animation.doOnStart
 import androidx.core.content.ContextCompat
 import androidx.core.view.doOnLayout
 import androidx.core.view.doOnPreDraw
@@ -24,15 +26,18 @@ import com.bewell.utils.blendColors
 import com.bewell.utils.dp
 import com.bewell.utils.getValueAnimator
 import com.bewell.utils.screenWidth
+import com.google.android.material.card.MaterialCardView
 
 
-
-class ResultRecyclerAdapter(context: Context) : RecyclerView.Adapter<ResultRecyclerAdapter.ListViewHolder>() {
+class ResultRecyclerAdapter(val context: Context) : RecyclerView.Adapter<ResultRecyclerAdapter.ListViewHolder>() {
 
     /** List Model. A sample model that only contains id */
     data class MainListModel(val id: Int)
 
-    //private val originalBg: Int = ContextCompat.getColor(context, R.color.list_item_bg_collapsed)
+    private val originalBg = TypedValue()
+    private val expandedBg = TypedValue()
+
+    //private val originalBg: Int = ContextCompat.getColor(context, R.color.background)
     //private val expandedBg: Int = ContextCompat.getColor(context, R.color.list_item_bg_expanded)
 
     private val listItemHorizontalPadding: Float = context.resources.getDimension(R.dimen.list_item_horizontal_padding)
@@ -67,6 +72,15 @@ class ResultRecyclerAdapter(context: Context) : RecyclerView.Adapter<ResultRecyc
     ///////////////////////////////////////////////////////////////////////////
     // Methods
     ///////////////////////////////////////////////////////////////////////////
+
+    init {
+        println("init started")
+        context.theme.resolveAttribute(com.google.android.material.R.attr.backgroundColor, originalBg, false)
+        context.theme.resolveAttribute(com.google.android.material.R.attr.colorSecondaryContainer, expandedBg, true)
+
+        println(originalBg.data)
+        println(expandedBg.data)
+    }
 
     fun addData(intent: Intent) {
         Log.d(TAG, "data adding started")
@@ -105,32 +119,24 @@ class ResultRecyclerAdapter(context: Context) : RecyclerView.Adapter<ResultRecyc
         holder.textViewLarge.text = param[0]
         holder.textViewMiddle.text = param[1]
         holder.textViewSmall.text = param[2]
-
         holder.descriptionText.text = param[4]
-        //println(param[4])
 
-        when (param[3]) {
-            "green" -> holder.card.setCardBackgroundColor(
-                ContextCompat.getColor(
-                    holder.card.context, R.color.soft_green
-                ))
-            "yellow" -> holder.card.setCardBackgroundColor(
-                ContextCompat.getColor(
-                    holder.card.context, R.color.soft_yellow
-                ))
-            "red" -> holder.card.setCardBackgroundColor(
-                ContextCompat.getColor(
-                    holder.card.context, R.color.soft_red
-                ))
+        val color = when (param[3]) {
+            "green" -> R.color.soft_green
+            "yellow" -> R.color.soft_yellow
+            "red" -> R.color.soft_red
+            else -> throw Exception("Unknown color of text on Card")
         }
 
-
+        holder.textViewMiddle.background.setTint(ContextCompat.getColor(context, color))
 
         //expandItem(holder, model == expandedModel, animate = false)
         //scaleDownItem(holder, position, isScaledDown)
 
+
         holder.cardContainer.setOnClickListener {
             println(expandedHeights[position])
+
             //println(expandedHeights[holder.layoutPosition])
 
             //holder.expandView.isVisible = true
@@ -249,7 +255,7 @@ class ResultRecyclerAdapter(context: Context) : RecyclerView.Adapter<ResultRecyc
         holder.cardContainer.layoutParams.width =
             (originalWidth + (expandedWidth - originalWidth) * progress).toInt()
 
-        //holder.cardContainer.setBackgroundColor(blendColors(originalBg, expandedBg, progress))
+        holder.cardContainer.setBackgroundColor(blendColors(originalBg.data, expandedBg.data, progress))
         holder.cardContainer.requestLayout()
 
         holder.chevron.rotation = 90 * progress
@@ -328,7 +334,7 @@ class ResultRecyclerAdapter(context: Context) : RecyclerView.Adapter<ResultRecyc
         val cardContainer: View = itemView.findViewById(R.id.card_container)
         val scaleContainer: View = itemView.findViewById(R.id.scale_container)
         val listItemFg: View = itemView.findViewById(R.id.list_item_fg)
-        val card: CardView = itemView.findViewById(R.id.card)
+        val card: MaterialCardView = itemView.findViewById(R.id.card)
 
         val textViewLarge: TextView = itemView.findViewById(R.id.textViewLarge)
         val textViewMiddle: TextView = itemView.findViewById(R.id.textViewMiddle)

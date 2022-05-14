@@ -1,5 +1,6 @@
 package com.bewell.presenter
 
+import android.app.Activity
 import android.util.Log
 import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -31,8 +32,8 @@ class ResultPresenter: MainContract.Presenter<ResultView>  {
         view = null
     }
 
-    fun setupResultsRecyclerView(resultsRecyclerView: RecyclerView) {
-        val myAdapter = ResultRecyclerAdapter(view!!.applicationContext)
+    fun setupResultsRecyclerView(resultsRecyclerView: RecyclerView, activity: Activity) {
+        val myAdapter = ResultRecyclerAdapter(activity)
         resultsRecyclerView.layoutManager = LinearLayoutManager(view!!.applicationContext)
         resultsRecyclerView.adapter = myAdapter
 

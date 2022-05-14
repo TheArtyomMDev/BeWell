@@ -31,7 +31,7 @@ class ResultView : AppCompatActivity() {
         presenter = ResultPresenter()
         presenter.attachView(this)
 
-        presenter.setupResultsRecyclerView(binding.resultsRecyclerView)
+        presenter.setupResultsRecyclerView(binding.resultsRecyclerView, this)
 
         presenter.uploadMeasureInfo()
     }
