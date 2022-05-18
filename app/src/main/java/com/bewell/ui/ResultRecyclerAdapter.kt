@@ -74,12 +74,8 @@ class ResultRecyclerAdapter(val context: Context) : RecyclerView.Adapter<ResultR
     ///////////////////////////////////////////////////////////////////////////
 
     init {
-        println("init started")
         context.theme.resolveAttribute(com.google.android.material.R.attr.backgroundColor, originalBg, false)
         context.theme.resolveAttribute(com.google.android.material.R.attr.colorSecondaryContainer, expandedBg, true)
-
-        println(originalBg.data)
-        println(expandedBg.data)
     }
 
     fun addData(intent: Intent) {
