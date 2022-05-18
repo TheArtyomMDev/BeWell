@@ -1,6 +1,5 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
-apply plugin: 'com.google.gms.google-services'
 
 android {
     compileSdkVersion 32
@@ -22,6 +21,18 @@ android {
         viewBinding true
     }
 
+    flavorDimensions "def"
+    productFlavors {
+        full {
+            dimension "def"
+            applicationIdSuffix ".full"
+            apply plugin: 'com.google.gms.google-services'
+        }
+        lite {
+            dimension "def"
+            applicationIdSuffix ".lite"
+        }
+    }
 }
 
 dependencies {
@@ -36,13 +47,12 @@ dependencies {
     implementation 'com.google.firebase:firebase-auth'
      */
 
-    implementation platform('com.google.firebase:firebase-bom:30.0.0')
-    implementation 'com.google.firebase:firebase-auth-ktx'
-    implementation 'com.google.firebase:firebase-firestore-ktx'
+    fullImplementation 'com.google.firebase:firebase-auth-ktx'
+    fullImplementation platform('com.google.firebase:firebase-bom:30.0.1')
+    fullImplementation 'com.google.firebase:firebase-firestore-ktx'
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
-
 
     implementation 'org.nield:kotlin-statistics:1.2.1'
 

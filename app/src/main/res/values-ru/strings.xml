@@ -33,4 +33,5 @@
     <string name="give_camera_permission">Чтобы использовать приложение, вам нужно выдать разрешение на использование камеры</string>
     <string name="grant_permission">Выдать</string>
     <string name="in_info">Индекс напряжения. Основной показатель состояния адаптации</string>
+    <string name="in_dimension">ед.</string>
 </resources>

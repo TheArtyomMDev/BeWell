@@ -1,19 +1,7 @@
 package com.bewell.view
 
-import android.content.Intent
 import android.os.Bundle
-import android.transition.AutoTransition
-import android.transition.TransitionManager
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.widget.Button
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.cardview.widget.CardView
-import androidx.core.content.ContextCompat
-import androidx.recyclerview.widget.RecyclerView
-import com.bewell.R
 import com.bewell.databinding.ActivityResultBinding
 import com.bewell.presenter.ResultPresenter
 
@@ -32,8 +20,6 @@ class ResultView : AppCompatActivity() {
         presenter.attachView(this)
 
         presenter.setupResultsRecyclerView(binding.resultsRecyclerView, this)
-
-        presenter.uploadMeasureInfo()
     }
 
     override fun onDestroy() {

@@ -191,16 +191,16 @@ class HRVMeasurePresenter: MainContract.Presenter<HRVMeasureView> {
 
             intervalsBeatsTime = getIntervals(generalBeatsTime.toTypedArray())
 
-            val SDNN = intervalsBeatsTime.standardDeviation().roundDecimalTo(3)
+            val SDNN_VALUE = intervalsBeatsTime.standardDeviation().roundDecimalTo(3)
             val MRR = intervalsBeatsTime.average().roundDecimalTo(3)
             val MxDMn = getMxDMn(intervalsBeatsTime).roundDecimalTo(3)
             val Mode = getModeOf(intervalsBeatsTime).first.roundDecimalTo(3)
-            val AMo50 = getAMo50(intervalsBeatsTime).roundDecimalTo(2)
-            val CV = getCV(intervalsBeatsTime).roundDecimalTo(2)
+            val AMo50 = getAMo50(intervalsBeatsTime).roundDecimalTo(0)
+            val CV = getCV(intervalsBeatsTime).roundDecimalTo(1)
             val RMSSD = getRMSSD(intervalsBeatsTime).roundDecimalTo(3)
-            val IN = getIN(intervalsBeatsTime).roundDecimalTo(3)
+            val IN = getIN(intervalsBeatsTime).roundDecimalTo(0)
 
-            println(SDNN)
+            println(SDNN_VALUE)
             println(MRR)
             println(MxDMn)
             println(Mode)
@@ -212,8 +212,8 @@ class HRVMeasurePresenter: MainContract.Presenter<HRVMeasureView> {
 
             val values = listOf(
                 param(
-                    SDNN * 1000,
-                    "SDNN",
+                    (SDNN_VALUE * 1000),
+                    Constants.SDNN.NAME,
                     "мс",
                     30.0,
                     96.0,
@@ -270,7 +270,7 @@ class HRVMeasurePresenter: MainContract.Presenter<HRVMeasureView> {
                 param(
                     IN,
                     "IN",
-                    "points",
+                    view!!.resources.getString(R.string.in_dimension),
                     30.0,
                     140.0,
                     view!!.resources.getString(R.string.in_info)
@@ -279,6 +279,10 @@ class HRVMeasurePresenter: MainContract.Presenter<HRVMeasureView> {
 
 
             for (elem in values) {
+                //println("orig: ${elem.value} rounded: ${elem.value.toInt().toDouble()}")
+                var value =
+                    if (elem.value - elem.value.toInt().toDouble() < 0.0001) elem.value.toInt()
+                    else elem.value
 
                 var colour = "red"
                 if (elem.value >= elem.minValue && elem.value <= elem.maxValue)
@@ -293,7 +297,7 @@ class HRVMeasurePresenter: MainContract.Presenter<HRVMeasureView> {
                 intent.putStringArrayListExtra(
                     elem.name,
                     arrayListOf(
-                        "${elem.value} ${elem.dimension}",
+                        "${value} ${elem.dimension}",
                         "${view!!.resources.getString(R.string.norm)} ${elem.minValue}-${elem.maxValue}",
                         colour,
                         elem.description

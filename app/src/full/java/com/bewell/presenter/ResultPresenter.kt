@@ -2,27 +2,25 @@ package com.bewell.presenter
 
 import android.app.Activity
 import android.util.Log
-import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.bewell.R
 import com.bewell.base.MainContract
 import com.bewell.ui.ResultRecyclerAdapter
-
 import com.bewell.utils.Constants.TAG
 import com.bewell.view.ResultView
-import com.google.android.material.appbar.CollapsingToolbarLayout
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import java.text.SimpleDateFormat
 import java.util.*
+import javax.security.auth.callback.Callback
 
 
 class ResultPresenter: MainContract.Presenter<ResultView>  {
     private var view: ResultView? = null
     private var params = mutableListOf<Array<String>>()
+
 
     override fun attachView(resultView: ResultView) {
         view = resultView
@@ -40,6 +38,8 @@ class ResultPresenter: MainContract.Presenter<ResultView>  {
         myAdapter.addData(view!!.intent)
 
         params = myAdapter.params
+
+        uploadMeasureInfo()
     }
 
     fun uploadMeasureInfo() {

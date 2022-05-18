@@ -16,6 +16,7 @@ import com.bewell.view.SignupView
 import com.bewell.view.StartMeasureView
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputLayout
+import com.google.firebase.FirebaseApp
 import com.google.firebase.FirebaseNetworkException
 import com.google.firebase.auth.*
 import com.google.firebase.auth.ktx.auth
@@ -35,6 +36,7 @@ class LoginPresenter: MainContract.Presenter<LoginView> {
     }
 
     fun setup(activity: Activity) {
+
         auth = Firebase.auth
         val currentUser = auth.currentUser
 

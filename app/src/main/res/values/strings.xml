@@ -36,4 +36,5 @@
     <string name="grant_permission">Grant</string>
     <string name="confirm" translatable="false">OK</string>
     <string name="in_info">Stress Index. The main indicator of the state of adaptation</string>
+    <string name="in_dimension">points</string>
 </resources>
