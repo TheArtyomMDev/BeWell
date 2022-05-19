@@ -7,7 +7,13 @@ Coming soon!
 - https://github.com/thomasnield/kotlin-statistics
 - https://github.com/material-components/material-components-android
 ## Privacy notes
-Which data we are collecting?
+The app has two versions:
+- Lite.
+  It is totally free of Google depencies, so you could be sure you are not tracked and we don't collect any info from it.
+- Full.
+  This version differs from Lite just only by including Google depencies (Firebase) to keep you data online.
+
+Which data we are collecting in Full version?
 - Time of each measure
 - Measure results 
 - Email 
@@ -17,7 +23,6 @@ How we are using this data?
 - Time used as a key of each measure
 - Measure results used in our anonymous statistics to improve our app algorithms
 
-*A bit later I will add option to disable uploading results & sending stats.
 ## Other info
 The idea of it was inspired by Welltory app.
 
