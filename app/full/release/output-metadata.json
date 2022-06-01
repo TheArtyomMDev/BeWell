@@ -1,0 +1,20 @@
+{
+  "version": 3,
+  "artifactType": {
+    "type": "APK",
+    "kind": "Directory"
+  },
+  "applicationId": "com.bewell.full",
+  "variantName": "fullRelease",
+  "elements": [
+    {
+      "type": "SINGLE",
+      "filters": [],
+      "attributes": [],
+      "versionCode": 4,
+      "versionName": "4.0.0-alpha",
+      "outputFile": "app-full-release.apk"
+    }
+  ],
+  "elementType": "File"
+}

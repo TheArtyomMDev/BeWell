@@ -26,7 +26,6 @@ import androidx.annotation.RequiresApi
 import androidx.core.content.res.ResourcesCompat
 import com.bewell.R
 import com.bewell.databinding.MainBinding
-import com.bewell.model.HRVMeasureModel
 import com.bewell.presenter.HRVMeasurePresenter
 import com.bewell.presenter.StartMeasurePresenter
 import com.bewell.utils.ImageProcessing

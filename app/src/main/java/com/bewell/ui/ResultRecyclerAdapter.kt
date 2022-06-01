@@ -1,6 +1,5 @@
 package com.bewell.ui
 
-import android.animation.ValueAnimator
 import android.content.Context
 import android.content.Intent
 import android.util.Log
@@ -9,24 +8,21 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AccelerateDecelerateInterpolator
-import android.widget.TextView
-import androidx.annotation.ColorInt
-import androidx.cardview.widget.CardView
 import androidx.core.animation.doOnEnd
 import androidx.core.animation.doOnStart
-import androidx.core.content.ContextCompat
 import androidx.core.view.doOnLayout
+import androidx.core.view.doOnNextLayout
 import androidx.core.view.doOnPreDraw
 import androidx.core.view.isVisible
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bewell.R
+import com.bewell.databinding.RecyclerviewItemBinding
+import com.bewell.model.HRVParam
 import com.bewell.utils.Constants.TAG
 import com.bewell.utils.blendColors
 import com.bewell.utils.dp
 import com.bewell.utils.getValueAnimator
 import com.bewell.utils.screenWidth
-import com.google.android.material.card.MaterialCardView
 
 
 class ResultRecyclerAdapter(val context: Context) : RecyclerView.Adapter<ResultRecyclerAdapter.ListViewHolder>() {
@@ -47,7 +43,7 @@ class ResultRecyclerAdapter(val context: Context) : RecyclerView.Adapter<ResultR
     private var originalHeight = -1 // will be calculated dynamically
     private var expandedHeight = -1 // will be calculated dynamically
 
-    var  expandedHeights = MutableList(20) {300}
+    var  expandedHeights = MutableList(20) {400}
 
     var animationPlaybackSpeed: Double = 0.8
 
@@ -56,9 +52,6 @@ class ResultRecyclerAdapter(val context: Context) : RecyclerView.Adapter<ResultR
     private val modelList = List(20) { MainListModel(it) }
     private val adapterList: List<MainListModel> get() = modelList
 
-    /** Variable used to filter adapter items. 'true' if filtered and 'false' if not */
-
-
     private val listItemExpandDuration: Long get() = (300L / animationPlaybackSpeed).toLong()
     private val inflater: LayoutInflater = LayoutInflater.from(context)
 
@@ -66,7 +59,7 @@ class ResultRecyclerAdapter(val context: Context) : RecyclerView.Adapter<ResultR
     private var expandedModel: MainListModel? = null
     private var isScaledDown = false
 
-    val params = mutableListOf<Array<String>>()
+    val params = mutableListOf<HRVParam>()
 
 
     ///////////////////////////////////////////////////////////////////////////
@@ -81,12 +74,9 @@ class ResultRecyclerAdapter(val context: Context) : RecyclerView.Adapter<ResultR
     fun addData(intent: Intent) {
         Log.d(TAG, "data adding started")
 
-        val bundle = intent.extras
-        if (bundle != null) {
-            for (key in bundle.keySet()) {
-                val list = intent.getStringArrayListExtra(key)
-                params.add(arrayOf(key, list!![0], list[1], list[2], list[3]))
-            }
+        val bundle = intent.extras!!
+        for (key in bundle.keySet()) {
+            params.add(intent.getSerializableExtra(key) as HRVParam)
         }
 
         Log.d(TAG, "data adding finished")
@@ -95,10 +85,9 @@ class ResultRecyclerAdapter(val context: Context) : RecyclerView.Adapter<ResultR
     override fun getItemCount(): Int = params.size
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ListViewHolder {
-        val itemView =
-            LayoutInflater.from(parent.context)
-                .inflate(R.layout.recyclerview_item, parent, false)
-        return ListViewHolder(itemView)
+        val binding = RecyclerviewItemBinding
+            .inflate(LayoutInflater.from(parent.context), parent, false)
+        return ListViewHolder(binding)
     }
 
     override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
@@ -110,27 +99,17 @@ class ResultRecyclerAdapter(val context: Context) : RecyclerView.Adapter<ResultR
         val model = adapterList[position]
         val param = params[position]
 
-        println(position)
+        holder.binding.param = param
 
-        holder.textViewLarge.text = param[0]
-        holder.textViewMiddle.text = param[1]
-        holder.textViewSmall.text = param[2]
-        holder.descriptionText.text = param[4]
+        println("pos: $position ${param.description}")
 
-        val color = when (param[3]) {
-            "green" -> R.color.soft_green
-            "yellow" -> R.color.soft_yellow
-            "red" -> R.color.soft_red
-            else -> throw Exception("Unknown color of text on Card")
-        }
 
-        holder.textViewMiddle.background.setTint(ContextCompat.getColor(context, color))
 
         //expandItem(holder, model == expandedModel, animate = false)
         //scaleDownItem(holder, position, isScaledDown)
 
 
-        holder.cardContainer.setOnClickListener {
+        holder.binding.cardContainer.setOnClickListener {
             println(expandedHeights[position])
 
             //println(expandedHeights[holder.layoutPosition])
@@ -175,17 +154,17 @@ class ResultRecyclerAdapter(val context: Context) : RecyclerView.Adapter<ResultR
             ) { progress -> setExpandProgress(holder, progress) }
 
             if (expand) animator.doOnStart {
-                holder.expandView.isVisible = true
+                holder.binding.expandView.isVisible = true
             }
             else animator.doOnEnd {
-                holder.expandView.isVisible = false
+                holder.binding.expandView.isVisible = false
             }
 
             animator.start()
         } else {
 
             // show expandView only if we have expandedHeight (onViewAttached)
-            holder.expandView.isVisible = expand && expandedHeights[holder.layoutPosition] >= 0
+            holder.binding.expandView.isVisible = expand && expandedHeights[holder.layoutPosition] >= 0
             setExpandProgress(holder, if (expand) 1f else 0f)
         }
     }
@@ -193,50 +172,28 @@ class ResultRecyclerAdapter(val context: Context) : RecyclerView.Adapter<ResultR
     override fun onViewAttachedToWindow(holder: ListViewHolder) {
         super.onViewAttachedToWindow(holder)
 
-        //val pos = holder.layoutPosition
 
-        /*
-        // get originalHeight & expandedHeight if not gotten before
-        if (expandedHeight < 0) {
-            //Log.d(TAG, "View at layout position $pos attached")
-            expandedHeight = 0 // so that this block is only called once
+        println(params[holder.layoutPosition].description)
+        holder.binding.descriptionText.text = params[holder.layoutPosition].description
+        println("text on ${holder.layoutPosition} ${holder.binding.descriptionText.text}")
 
-
-            holder.cardContainer.doOnLayout { view ->
-                originalHeight = view.height
-
-                // show expandView and record expandedHeight in next layout pass
-                // (doOnPreDraw) and hide it immediately. We use onPreDraw because
-                // it's called after layout is done. doOnNextLayout is called during
-                // layout phase which causes issues with hiding expandView.
-                holder.expandView.isVisible = true
-                view.doOnPreDraw {
-                    expandedHeight = view.height
-                    holder.expandView.isVisible = false
-                }
-            }
-        }
-
-
-         */
-
-        //Log.d(TAG, "View at layout position $pos attached")
-
-
-        holder.cardContainer.doOnLayout { view ->
+        holder.binding.cardContainer.doOnLayout { view ->
             if(originalHeight < 0) originalHeight = view.height
 
             // show expandView and record expandedHeight in next layout pass
             // (doOnPreDraw) and hide it immediately. We use onPreDraw because
             // it's called after layout is done. doOnNextLayout is called during
             // layout phase which causes issues with hiding expandView.
-            holder.expandView.isVisible = true
-            view.doOnPreDraw {
-                if (expandedHeights[holder.layoutPosition] == 300)
-                    expandedHeights[holder.layoutPosition]  = view.height
 
-                println("expanded view ${holder.layoutPosition} height is ${view.height}")
-                holder.expandView.isVisible = false
+
+            holder.binding.expandView.isVisible = true
+            view.doOnPreDraw {
+                if (view.height > expandedHeights[holder.layoutPosition])
+                    expandedHeights[holder.layoutPosition] = view.height
+
+                println("expanded height on pos ${holder.layoutPosition} is ${view.height}")
+
+                holder.binding.expandView.isVisible = false
                 expandItem(holder, adapterList[holder.layoutPosition] == expandedModel, animate = false)
                 scaleDownItem(holder, holder.layoutPosition, isScaledDown)
             }
@@ -245,62 +202,34 @@ class ResultRecyclerAdapter(val context: Context) : RecyclerView.Adapter<ResultR
 
     private fun setExpandProgress(holder: ListViewHolder, progress: Float) {
         if (expandedHeights[holder.layoutPosition] > 0 && originalHeight > 0) {
-            holder.cardContainer.layoutParams.height =
+            holder.binding.cardContainer.layoutParams.height =
                 (originalHeight + (expandedHeights[holder.layoutPosition] - originalHeight) * progress).toInt()
         }
-        holder.cardContainer.layoutParams.width =
+        holder.binding.cardContainer.layoutParams.width =
             (originalWidth + (expandedWidth - originalWidth) * progress).toInt()
 
-        holder.cardContainer.setBackgroundColor(blendColors(originalBg.data, expandedBg.data, progress))
-        holder.cardContainer.requestLayout()
+        holder.binding.cardContainer.setBackgroundColor(blendColors(originalBg.data, expandedBg.data, progress))
+        holder.binding.cardContainer.requestLayout()
 
-        holder.chevron.rotation = 90 * progress
+        holder.binding.arrow.rotation = 90 * progress
     }
 
     ///////////////////////////////////////////////////////////////////////////
     // Scale Down Animation
     ///////////////////////////////////////////////////////////////////////////
 
-    private inline val LinearLayoutManager.visibleItemsRange: IntRange
-        get() = findFirstVisibleItemPosition()..findLastVisibleItemPosition()
-
-    fun setScaleDownAnimator(isScaledDown: Boolean): ValueAnimator {
-        val lm = recyclerView.layoutManager as LinearLayoutManager
-
-        val animator = getValueAnimator(isScaledDown,
-            duration = 300L, interpolator = AccelerateDecelerateInterpolator()
-        ) { progress ->
-
-            // Get viewHolder for all visible items and animate attributes
-            for (i in lm.visibleItemsRange) {
-                val holder = recyclerView.findViewHolderForLayoutPosition(i) as ListViewHolder
-                setScaleDownProgress(holder, i, progress)
-            }
-        }
-
-        // Set adapter variable when animation starts so that newly binded views in
-        // onBindViewHolder will respect the new size when they come into the screen
-        animator.doOnStart { this.isScaledDown = isScaledDown }
-
-        // For all the non visible items in the layout manager, notify them to adjust the
-        // view to the new size
-        animator.doOnEnd {
-            repeat(lm.itemCount) { if (it !in lm.visibleItemsRange) notifyItemChanged(it) }
-        }
-        return animator
-    }
 
     private fun setScaleDownProgress(holder: ListViewHolder, position: Int, progress: Float) {
         val itemExpanded = position >= 0 && adapterList[position] == expandedModel
-        holder.cardContainer.layoutParams.apply {
+        holder.binding.cardContainer.layoutParams.apply {
             width = ((if (itemExpanded) expandedWidth else originalWidth) * (1 - 0.1f * progress)).toInt()
             height = ((if (itemExpanded) expandedHeights[holder.layoutPosition] else originalHeight) * (1 - 0.1f * progress)).toInt()
 //            log("width=$width, height=$height [${"%.2f".format(progress)}]")
         }
-        holder.cardContainer.requestLayout()
+        holder.binding.cardContainer.requestLayout()
 
-        holder.scaleContainer.scaleX = 1 - 0.05f * progress
-        holder.scaleContainer.scaleY = 1 - 0.05f * progress
+        holder.binding.scaleContainer.scaleX = 1 - 0.05f * progress
+        holder.binding.scaleContainer.scaleY = 1 - 0.05f * progress
 
         /*
         holder.scaleContainer.setPadding(
@@ -312,7 +241,7 @@ class ResultRecyclerAdapter(val context: Context) : RecyclerView.Adapter<ResultR
 
          */
 
-        holder.listItemFg.alpha = progress
+        holder.binding.listItemFg.alpha = progress
     }
 
     /** Convenience method for calling from onBindViewHolder */
@@ -324,17 +253,7 @@ class ResultRecyclerAdapter(val context: Context) : RecyclerView.Adapter<ResultR
     // ViewHolder
     ///////////////////////////////////////////////////////////////////////////
 
-    class ListViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val expandView: View = itemView.findViewById(R.id.expand_view)
-        val chevron: View = itemView.findViewById(R.id.arrow)
-        val cardContainer: View = itemView.findViewById(R.id.card_container)
-        val scaleContainer: View = itemView.findViewById(R.id.scale_container)
-        val listItemFg: View = itemView.findViewById(R.id.list_item_fg)
-        val card: MaterialCardView = itemView.findViewById(R.id.card)
+    class ListViewHolder(val binding: RecyclerviewItemBinding) : RecyclerView.ViewHolder(binding.root) {
 
-        val textViewLarge: TextView = itemView.findViewById(R.id.textViewLarge)
-        val textViewMiddle: TextView = itemView.findViewById(R.id.textViewMiddle)
-        val textViewSmall: TextView = itemView.findViewById(R.id.textViewSmall)
-        val descriptionText: TextView = itemView.findViewById(R.id.description_text)
     }
 }

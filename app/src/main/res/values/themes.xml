@@ -2,6 +2,7 @@
 
     <style name="AppTheme" parent="Theme.Material3.DayNight.NoActionBar">
         <item name="fontFamily">@font/montserrat_light</item>
+        <item name="dynamicColorThemeOverlay">@style/ThemeOverlay.Material3.DynamicColors.DayNight</item>
     </style>
 
 </resources>

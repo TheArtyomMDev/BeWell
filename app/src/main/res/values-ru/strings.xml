@@ -13,7 +13,6 @@
     <string name="show_less">Скрыть</string>
     <string name="norm">Норма</string>
 
-    <string name="cv_info">Коэффициент вариабельности. Основной показатель здоровья сердца</string>
     <string name="sdnn_info">Стандартное отклонение интервалов. Показывает состояние вегетативной нервной системы</string>
     <string name="mrr_info">Средняя длительность интервалов. Оценивает напряженность организма в целом</string>
     <string name="mxdmn_info">Размах интервалов. Чем выше, тем ниже напряжение</string>
@@ -34,4 +33,5 @@
     <string name="grant_permission">Выдать</string>
     <string name="in_info">Индекс напряжения. Основной показатель состояния адаптации</string>
     <string name="in_dimension">ед.</string>
+    <string name="cv_info">Коэффициент вариабельности. Основной показатель здоровья сердца</string>
 </resources>

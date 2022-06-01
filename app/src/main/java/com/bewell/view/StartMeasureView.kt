@@ -1,5 +1,6 @@
 package com.bewell.view
 
+import android.app.Application
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
@@ -7,6 +8,7 @@ import com.bewell.R
 import com.bewell.databinding.ActivityStartBinding
 import com.bewell.presenter.StartMeasurePresenter
 import com.bewell.utils.Constants
+import com.google.android.material.color.DynamicColors
 
 class StartMeasureView : AppCompatActivity() {
 

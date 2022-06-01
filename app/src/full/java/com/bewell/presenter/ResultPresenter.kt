@@ -21,7 +21,6 @@ class ResultPresenter: MainContract.Presenter<ResultView>  {
     private var view: ResultView? = null
     private var params = mutableListOf<Array<String>>()
 
-
     override fun attachView(resultView: ResultView) {
         view = resultView
     }
@@ -30,15 +29,8 @@ class ResultPresenter: MainContract.Presenter<ResultView>  {
         view = null
     }
 
-    fun setupResultsRecyclerView(resultsRecyclerView: RecyclerView, activity: Activity) {
-        val myAdapter = ResultRecyclerAdapter(activity)
-        resultsRecyclerView.layoutManager = LinearLayoutManager(view!!.applicationContext)
-        resultsRecyclerView.adapter = myAdapter
-
-        myAdapter.addData(view!!.intent)
-
-        params = myAdapter.params
-
+    fun onParamsReceived(params: MutableList<Array<String>>) {
+        this.params = params
         uploadMeasureInfo()
     }
 

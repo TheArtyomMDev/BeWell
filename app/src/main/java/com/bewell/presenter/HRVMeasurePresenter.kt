@@ -13,11 +13,10 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat.startActivity
 import com.bewell.R
 import com.bewell.base.MainContract
-import com.bewell.model.HRVMeasureModel.param
+import com.bewell.model.HRVParam
 import com.bewell.storage.Preferences
 import com.bewell.storage.Preferences.Companion.PREF_GENERAL_START_TIME_IN_MILLI_SEC
 import com.bewell.storage.Preferences.Companion.PREF_GOING
-import com.bewell.ui.*
 import com.bewell.utils.Constants
 import com.bewell.utils.Constants.TAG
 import com.bewell.utils.ImageProcessing
@@ -211,7 +210,7 @@ class HRVMeasurePresenter: MainContract.Presenter<HRVMeasureView> {
             val intent = Intent(view!!.applicationContext, ResultView::class.java)
 
             val values = listOf(
-                param(
+                HRVParam(
                     (SDNN_VALUE * 1000),
                     Constants.SDNN.NAME,
                     "мс",
@@ -219,7 +218,7 @@ class HRVMeasurePresenter: MainContract.Presenter<HRVMeasureView> {
                     96.0,
                     view!!.resources.getString(R.string.sdnn_info)
                 ),
-                param(
+                HRVParam(
                     MRR * 1000,
                     "MRR",
                     "мс",
@@ -227,7 +226,7 @@ class HRVMeasurePresenter: MainContract.Presenter<HRVMeasureView> {
                     1370.0,
                     view!!.resources.getString(R.string.mrr_info)
                 ),
-                param(
+                HRVParam(
                     MxDMn * 1000,
                     "MxDMn",
                     "мс",
@@ -235,7 +234,7 @@ class HRVMeasurePresenter: MainContract.Presenter<HRVMeasureView> {
                     450.0,
                     view!!.resources.getString(R.string.mxdmn_info)
                 ),
-                param(
+                HRVParam(
                     Mode * 1000,
                     "Mo",
                     "мс",
@@ -243,7 +242,7 @@ class HRVMeasurePresenter: MainContract.Presenter<HRVMeasureView> {
                     1370.0,
                     view!!.resources.getString(R.string.mode_info)
                 ),
-                param(
+                HRVParam(
                     RMSSD * 1000,
                     "RMSSD",
                     "мс",
@@ -251,7 +250,7 @@ class HRVMeasurePresenter: MainContract.Presenter<HRVMeasureView> {
                     90.0,
                     view!!.resources.getString(R.string.rmssd_info)
                 ),
-                param(
+                HRVParam(
                     AMo50,
                     "AMo50",
                     "%",
@@ -259,7 +258,7 @@ class HRVMeasurePresenter: MainContract.Presenter<HRVMeasureView> {
                     50.0,
                     view!!.resources.getString(R.string.amo50_info)
                 ),
-                param(
+                HRVParam(
                     CV,
                     "CV",
                     "%",
@@ -267,7 +266,7 @@ class HRVMeasurePresenter: MainContract.Presenter<HRVMeasureView> {
                     8.3,
                     view!!.resources.getString(R.string.cv_info)
                 ),
-                param(
+                HRVParam(
                     IN,
                     "IN",
                     view!!.resources.getString(R.string.in_dimension),
@@ -277,33 +276,8 @@ class HRVMeasurePresenter: MainContract.Presenter<HRVMeasureView> {
                 )
             )
 
+            for(param in values) intent.putExtra(param.name, param)
 
-            for (elem in values) {
-                //println("orig: ${elem.value} rounded: ${elem.value.toInt().toDouble()}")
-                var value =
-                    if (elem.value - elem.value.toInt().toDouble() < 0.0001) elem.value.toInt()
-                    else elem.value
-
-                var colour = "red"
-                if (elem.value >= elem.minValue && elem.value <= elem.maxValue)
-                    colour = "green"
-                else if (min(
-                        elem.value - elem.maxValue,
-                        elem.value - elem.minValue
-                    ) < 0.2 * (elem.maxValue - elem.minValue)
-                )
-                    colour = "yellow"
-
-                intent.putStringArrayListExtra(
-                    elem.name,
-                    arrayListOf(
-                        "${value} ${elem.dimension}",
-                        "${view!!.resources.getString(R.string.norm)} ${elem.minValue}-${elem.maxValue}",
-                        colour,
-                        elem.description
-                    )
-                )
-            }
 
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
 

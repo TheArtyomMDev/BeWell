@@ -11,6 +11,7 @@ import android.widget.Button
 import android.widget.RadioGroup
 import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.startActivity
+import com.bewell.BuildConfig
 import com.bewell.base.MainContract
 import com.bewell.storage.Preferences.Companion.FILE_NAME
 import com.bewell.storage.Preferences.Companion.PREF_MEASURE_TIME_IN_SEC
@@ -37,8 +38,10 @@ class StartMeasurePresenter: MainContract.Presenter<StartMeasureView> {
         val order = timesRadioGroup.indexOfChild(timesRadioGroup.findViewById(checkedId))
         confirmButton.isEnabled = true
 
+        if (BuildConfig.DEBUG)
+
         measureTimeInSec = when(order) {
-            0 -> 10
+            0 -> if (BuildConfig.DEBUG) 10 else 150
             1 -> 300
             2 -> 450
             else -> throw Exception("Wrong id of radiobutton")
