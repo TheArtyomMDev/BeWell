@@ -85,7 +85,7 @@
                         android:layout_height="wrap_content"
                         android:layout_below="@+id/value"
                         android:layout_alignEnd="@+id/value"
-                        android:text="@{@string/norm + ` ` + Double.toString(param.minValue) + ` - ` + Double.toString(param.maxValue) + ` ` + param.dimension}" />
+                        android:text="@{@string/norm + ` ` + Double.toString(param.minValue) + `-` + Double.toString(param.maxValue) + ` ` + param.dimension}" />
 
                     <ImageView
                         android:id="@+id/arrow"

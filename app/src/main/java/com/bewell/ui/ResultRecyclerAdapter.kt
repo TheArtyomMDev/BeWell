@@ -101,8 +101,7 @@ class ResultRecyclerAdapter(val context: Context) : RecyclerView.Adapter<ResultR
 
         holder.binding.param = param
 
-        println("pos: $position ${param.description}")
-
+        //println("pos: $position ${holder.binding.descriptionText.text}")
 
 
         //expandItem(holder, model == expandedModel, animate = false)
