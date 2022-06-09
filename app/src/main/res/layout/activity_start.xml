@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".view.StartMeasureView">
+    tools:context=".StartMeasureActivity">
 
     <TextView
         android:id="@+id/header"
@@ -62,11 +62,20 @@
         style="@style/button"
         android:layout_width="92dp"
         android:layout_height="62dp"
-        android:layout_marginEnd="40dp"
-        android:layout_marginBottom="32dp"
         android:enabled="false"
         android:text="@string/confirm"
+        app:layout_constraintBottom_toBottomOf="@+id/cancel_button"
+        app:layout_constraintEnd_toEndOf="@+id/times_card"
+        app:layout_constraintTop_toTopOf="@+id/cancel_button" />
+
+    <Button
+        android:id="@+id/cancel_button"
+        style="@style/button"
+        android:layout_width="wrap_content"
+        android:layout_height="62dp"
+        android:layout_marginBottom="32dp"
+        android:text="@string/cancel"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintStart_toStartOf="@+id/times_card" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

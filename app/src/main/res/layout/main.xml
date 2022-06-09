@@ -10,7 +10,7 @@
 
 	<view
 		android:id="@+id/beats"
-		class="com.bewell.view.custom.MeasureAnimationView"
+		class="com.bewell.views.MeasureAnimationView"
 		android:layout_width="fill_parent"
 		android:layout_height="wrap_content"
 		android:layout_weight="7"
@@ -45,7 +45,7 @@
 			android:layout_height="fill_parent" />
 
 		<view
-			class="com.bewell.view.custom.MeasureProgressView"
+			class="com.bewell.views.MeasureProgressView"
 			android:id="@+id/canvas2"
 			android:layout_width="fill_parent"
 			android:layout_height="fill_parent"

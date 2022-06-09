@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<MotionScene 
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:motion="http://schemas.android.com/apk/res-auto">
+
+    <Transition
+        motion:constraintSetEnd="@+id/end"
+        motion:constraintSetStart="@id/start"
+        motion:duration="800">
+       <KeyFrameSet>
+           <KeyAttribute
+               motion:motionTarget="@+id/fab"
+               motion:framePosition="80"
+               android:alpha="0.9" />
+           <KeyPosition
+               motion:motionTarget="@+id/fab"
+               motion:framePosition="40"
+               motion:keyPositionType="deltaRelative"
+               motion:percentX="1.0"
+               motion:percentY="1.0"/>
+           <KeyAttribute
+               motion:motionTarget="@+id/fab"
+               motion:framePosition="40"
+               android:scaleX="1"
+               android:scaleY="1"/>
+       </KeyFrameSet>
+    </Transition>
+
+    <ConstraintSet android:id="@+id/start">
+    </ConstraintSet>
+
+    <ConstraintSet android:id="@+id/end">
+
+        <Constraint
+
+            motion:layout_constraintBottom_toBottomOf="parent"
+            motion:layout_constraintEnd_toEndOf="parent"
+
+            motion:layout_constraintStart_toStartOf="parent"
+            android:id="@+id/fab"
+            motion:layout_constraintTop_toTopOf="parent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:scaleX="2"
+            android:scaleY="4" />
+        <Constraint
+            motion:layout_editor_absoluteY="0dp"
+            android:layout_height="match_parent"
+            motion:layout_editor_absoluteX="0dp"
+            android:layout_width="match_parent"
+            android:id="@+id/recyclerView" />
+    </ConstraintSet>
+</MotionScene>

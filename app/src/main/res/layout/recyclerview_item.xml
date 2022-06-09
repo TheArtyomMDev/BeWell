@@ -6,7 +6,7 @@
     <data>
         <variable
             name="param"
-            type="com.bewell.model.HRVParam" />
+            type="com.bewell.data.HRVParam" />
     </data>
 
     <!--FrameLayout is used as top level layout because when the CardView is getting
@@ -73,11 +73,11 @@
                         android:layout_alignParentEnd="true"
                         android:layout_marginTop="@dimen/list_item_vertical_padding"
                         android:background="@drawable/rectangle"
+                        android:backgroundTint="@{(param.value >= param.minValue &amp;&amp; param.value &lt;= param.maxValue)? @color/soft_green : @color/soft_red}"
                         android:paddingLeft="5dp"
                         android:paddingRight="5dp"
                         android:text="@{Double.toString(param.value) + ` ` + param.dimension}"
-                        android:textSize="25sp"
-                        android:backgroundTint="@{(param.value >= param.minValue &amp;&amp; param.value &lt;= param.maxValue)? @color/soft_green : @color/soft_red}"/>
+                        android:textSize="25sp" />
 
                     <TextView
                         android:id="@+id/norm"

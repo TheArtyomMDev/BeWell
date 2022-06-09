@@ -9,24 +9,26 @@
     <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <application
-        android:name=".utils.Application"
+        android:name=".App"
         android:icon="@mipmap/heart"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/heart"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
         <activity
-            android:name=".view.StartMeasureView"
+            android:name=".MainActivity"
             android:exported="true" />
         <activity
-            android:name=".view.GivePermissionsView"
+            android:name=".StartMeasureActivity"
+            android:exported="true" />
+        <activity
+            android:name=".AskToGivePermissionsActivity"
             android:exported="false" />
         <activity
-            android:name=".view.ResultView"
+            android:name=".MeasureResultActivity"
             android:exported="false" />
         <activity
-            android:name=".view.HRVMeasureView"
+            android:name=".HRVMeasureActivity"
             android:exported="true"
             android:noHistory="true" />
     </application>

@@ -7,6 +7,10 @@
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/heartrate.app.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/app/heartrate.app.androidTest.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/heartrate.app.main.iml" filepath="$PROJECT_DIR$/.idea/modules/app/heartrate.app.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/heartrate.app.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/app/heartrate.app.unitTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/bottomnav/heartrate.bottomnav.iml" filepath="$PROJECT_DIR$/.idea/modules/bottomnav/heartrate.bottomnav.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/bottomnav/heartrate.bottomnav.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/bottomnav/heartrate.bottomnav.androidTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/bottomnav/heartrate.bottomnav.main.iml" filepath="$PROJECT_DIR$/.idea/modules/bottomnav/heartrate.bottomnav.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/bottomnav/heartrate.bottomnav.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/bottomnav/heartrate.bottomnav.unitTest.iml" />
     </modules>
   </component>
 </project>
