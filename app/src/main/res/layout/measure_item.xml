@@ -5,8 +5,13 @@
 
     <data>
         <variable
-            name="param"
-            type="com.bewell.data.HRVParam" />
+            name="measure"
+            type="com.bewell.data.Measure" />
+        <import type="java.time.Instant"/>
+        <import type="java.time.format.DateTimeFormatter"/>
+        <import type="java.time.LocalDateTime"/>
+        <import type="java.time.ZoneId"/>
+
     </data>
 
     <!--FrameLayout is used as top level layout because when the CardView is getting
@@ -58,17 +63,19 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
 
+                        android:layout_alignParentTop="true"
+                        android:layout_marginTop="16dp"
                         android:gravity="center"
-                        android:text="@{param.name}"
+                        android:text="@{DateTimeFormatter.ofPattern(@string/time_format).format(LocalDateTime.ofInstant((Instant.ofEpochMilli(measure.timeCreated)), ZoneId.systemDefault()))}"
                         android:textSize="30sp" />
 
                     <ImageView
                         android:id="@+id/arrow"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_alignTop="@+id/time"
+                        android:layout_alignBottom="@+id/time"
                         android:layout_alignParentEnd="true"
-                        android:layout_alignParentTop="true"
-                        android:layout_marginTop="16dp"
                         app:srcCompat="@drawable/arrow" />
 
                 </RelativeLayout>

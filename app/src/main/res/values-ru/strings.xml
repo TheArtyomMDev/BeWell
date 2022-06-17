@@ -32,9 +32,11 @@
     <string name="give_camera_permission">Чтобы использовать приложение, вам нужно выдать разрешение на использование камеры</string>
     <string name="grant_permission">Выдать</string>
     <string name="in_info">Индекс напряжения. Основной показатель состояния адаптации</string>
-    <string name="in_dimension">ед.</string>
+    <string name="points_dimension">ед.</string>
     <string name="cv_info">Коэффициент вариабельности. Основной показатель здоровья сердца</string>
     <string name="cancel">Отмена</string>
     <string name="title_home">Главная</string>
     <string name="title_settings">Настройки</string>
+    <string name="measures">Измерения</string>
+    <string name="ms_dimesion">мс</string>
 </resources>

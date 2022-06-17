@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.view.animation.AccelerateDecelerateInterpolator
 import androidx.core.animation.doOnEnd
 import androidx.core.animation.doOnStart
+import androidx.core.content.ContextCompat
 import androidx.core.view.doOnLayout
 import androidx.core.view.doOnPreDraw
 import androidx.core.view.isVisible
@@ -14,10 +15,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bewell.R
 import com.bewell.databinding.RecyclerviewItemBinding
 import com.bewell.data.HRVParam
+import com.bewell.data.Measure
 import com.bewell.utils.blendColors
 import com.bewell.utils.dp
 import com.bewell.utils.getValueAnimator
 import com.bewell.utils.screenWidth
+import java.util.*
 
 
 class ResultRecyclerAdapter(val context: Context) : RecyclerView.Adapter<ResultRecyclerAdapter.ListViewHolder>() {
@@ -52,7 +55,8 @@ class ResultRecyclerAdapter(val context: Context) : RecyclerView.Adapter<ResultR
     private var expandedModel: MainListModel? = null
     private var isScaledDown = false
 
-    var params = mutableListOf<HRVParam>()
+    lateinit var params: List<HRVParam>
+    lateinit var measure: Measure
 
 
     ///////////////////////////////////////////////////////////////////////////
@@ -82,7 +86,24 @@ class ResultRecyclerAdapter(val context: Context) : RecyclerView.Adapter<ResultR
         val model = adapterList[position]
         val param = params[position]
 
+        println(measure)
+        println(param.id)
+        val valueField = measure.javaClass.getDeclaredField(param.id)
+        valueField.isAccessible = true
+        val value = valueField.get(measure) as Double
+
         holder.binding.param = param
+        holder.binding.value.text = "$value ${param.dimension}"
+
+        if(value >= param.minValue && value <= param.maxValue) {
+            holder.binding.value.backgroundTintList =
+                ContextCompat.getColorStateList(context, R.color.soft_green)
+        }
+        else {
+            holder.binding.value.backgroundTintList =
+                ContextCompat.getColorStateList(context, R.color.soft_red)
+        }
+
 
         //println("pos: $position ${holder.binding.descriptionText.text}")
 
@@ -154,9 +175,8 @@ class ResultRecyclerAdapter(val context: Context) : RecyclerView.Adapter<ResultR
     override fun onViewAttachedToWindow(holder: ListViewHolder) {
         super.onViewAttachedToWindow(holder)
 
-
-        println(params[holder.layoutPosition].description)
-        holder.binding.descriptionText.text = params[holder.layoutPosition].description
+        println(params[holder.layoutPosition].info)
+        holder.binding.descriptionText.text = params[holder.layoutPosition].info
         println("text on ${holder.layoutPosition} ${holder.binding.descriptionText.text}")
 
         holder.binding.cardContainer.doOnLayout { view ->

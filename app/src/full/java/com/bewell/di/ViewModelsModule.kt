@@ -5,6 +5,8 @@ import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
 var viewModelsModule = module {
+    
+    // Activities
     viewModel {
         StartMeasureViewModel(get(), get())
     }
@@ -15,12 +17,19 @@ var viewModelsModule = module {
         AskToGivePermissionsViewModel()
     }
     viewModel {
-        HRVMeasureViewModel(get(), get())
+        HRVMeasureViewModel(get(), get(), get(), get())
     }
+    
+    
     viewModel {
         LoginViewModel(get(), get())
     }
     viewModel {
         SignupViewModel(get(), get())
+    }
+    
+    
+    viewModel {
+        MeasuresListViewModel(get())
     }
 }

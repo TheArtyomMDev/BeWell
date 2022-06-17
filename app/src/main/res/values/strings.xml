@@ -36,9 +36,12 @@
     <string name="grant_permission">Grant</string>
     <string name="confirm" translatable="false">OK</string>
     <string name="in_info">Stress Index. The main indicator of the state of adaptation</string>
-    <string name="in_dimension">points</string>
+    <string name="points_dimension">points</string>
     <string name="title_activity_main">MainActivity</string>
     <string name="title_home">Home</string>
     <string name="title_settings">Settings</string>
     <string name="cancel">Cancel</string>
+    <string name="time_format" translatable="false">HH:mm:ss</string>
+    <string name="measures">Measures</string>
+    <string name="ms_dimesion">ms</string>
 </resources>

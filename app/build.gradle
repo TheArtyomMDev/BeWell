@@ -50,8 +50,8 @@ android {
 dependencies {
     // necessary stuff
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.6.21"
-    implementation "androidx.core:core-ktx:1.7.0"
+    implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.7.0'
+    implementation 'androidx.core:core-ktx:1.8.0'
 
     // live data + view model
     implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.4.1'
@@ -62,9 +62,10 @@ dependencies {
     implementation 'androidx.navigation:navigation-fragment-ktx:2.4.2'
     implementation 'androidx.navigation:navigation-ui-ktx:2.4.2'
     implementation 'com.google.firebase:firebase-common-ktx:20.1.1'
+    implementation 'org.apache.commons:commons-math3:3.6.1'
 
     // firebase stuff
-    fullImplementation platform('com.google.firebase:firebase-bom:30.0.1')
+    fullImplementation platform('com.google.firebase:firebase-bom:30.1.0')
     fullImplementation 'com.google.firebase:firebase-auth-ktx'
     fullImplementation 'com.google.firebase:firebase-firestore-ktx'
 
@@ -77,11 +78,11 @@ dependencies {
 
     // ui
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
-    implementation 'androidx.appcompat:appcompat:1.4.1'
+    implementation 'androidx.appcompat:appcompat:1.4.2'
     implementation "com.google.android.material:material:1.7.0-alpha02"
 
     // coroutines
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.6.1'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.6.2'
 
     // koin
     def koin_version= "3.2.0"
@@ -90,8 +91,12 @@ dependencies {
     implementation "io.insert-koin:koin-androidx-workmanager:$koin_version"
     implementation "io.insert-koin:koin-androidx-navigation:$koin_version"
 
-
+    // room
+    def room_version = "2.4.2"
+    implementation "androidx.room:room-runtime:$room_version"
+    kapt "androidx.room:room-compiler:$room_version"
 }
+
 repositories {
     mavenCentral()
 }

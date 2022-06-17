@@ -1,27 +1,23 @@
 package com.bewell.viewmodels
 
-import android.app.Activity
 import android.app.Application
-import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.hardware.Camera
-import android.os.PowerManager
 import android.util.Log
 import android.view.SurfaceHolder
-import android.view.WindowManager
-import android.widget.TextView
-import androidx.core.content.ContextCompat.startActivity
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import com.bewell.R
-import com.bewell.data.HRVParam
+import androidx.lifecycle.liveData
+import com.bewell.data.Measure
+import com.bewell.storage.repository.MeasureRepository
 import com.bewell.storage.Preferences
 import com.bewell.storage.Preferences.Companion.PREF_GENERAL_START_TIME_IN_MILLI_SEC
 import com.bewell.storage.Preferences.Companion.PREF_GOING
 import com.bewell.utils.Constants
 import com.bewell.utils.ImageProcessing
+import com.bewell.utils.Math.filterArray
 import com.bewell.utils.Math.getAMo50
 import com.bewell.utils.Math.getCV
 import com.bewell.utils.Math.getIN
@@ -30,14 +26,20 @@ import com.bewell.utils.Math.getModeOf
 import com.bewell.utils.Math.getMxDMn
 import com.bewell.utils.Math.getRMSSD
 import com.bewell.utils.Math.roundDecimalTo
-import com.bewell.HRVMeasureActivity
-import com.bewell.MeasureResultActivity
+import com.google.firebase.auth.FirebaseAuth
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.nield.kotlinstatistics.standardDeviation
 import java.util.concurrent.atomic.AtomicBoolean
 
-class HRVMeasureViewModel(application: Application, private val sharedPreferences: SharedPreferences):
+class HRVMeasureViewModel(application: Application,
+                          private val sharedPreferences: SharedPreferences,
+                          private val measureRepo: MeasureRepository,
+                          private val auth: FirebaseAuth):
     AndroidViewModel(application) {
     var isMeasureFinished = MutableLiveData<Boolean>().apply { postValue(false) }
+    var result = MutableLiveData<Boolean>()
     lateinit var intent: Intent
 
     lateinit var previewHolder: SurfaceHolder
@@ -65,7 +67,8 @@ class HRVMeasureViewModel(application: Application, private val sharedPreference
 
     private val averageArray = IntArray(averageArraySize)
     private var generalBeatsTime: MutableList<Double> = ArrayList()
-    private var intervalsBeatsTime: Array<Double> = arrayOf()
+
+    lateinit var measure: Measure
 
     val surfaceCallback: SurfaceHolder.Callback = object : SurfaceHolder.Callback {
 
@@ -103,7 +106,7 @@ class HRVMeasureViewModel(application: Application, private val sharedPreference
         val height = size.height
         //println("$width $height ${data.size}")
         imageAverage = ImageProcessing.decodeYUV420SPtoRedAvg(data.clone(), height, width)
-        println(imageAverage)
+        //println(imageAverage)
 
         updateProcessing(processing)
 
@@ -189,21 +192,22 @@ class HRVMeasureViewModel(application: Application, private val sharedPreference
             startTime = System.currentTimeMillis()
             beats = 0.0
         }
-        if ((endTime - generalStartTimeInMilliSec) / 1000.0 >= measureTimeInSec) {
+        if (!isMeasureFinished.value!! && (endTime - generalStartTimeInMilliSec) / 1000.0 >= measureTimeInSec) {
             processing.set(false)
 
-            intervalsBeatsTime = getIntervals(generalBeatsTime.toTypedArray())
+            val intervalsBeatsTime = getIntervals(generalBeatsTime.toTypedArray())
+            val intervalsBeatsTimeFiltered = filterArray(intervalsBeatsTime.clone(), 0.9)
 
-            val SDNN_VALUE = intervalsBeatsTime.standardDeviation().roundDecimalTo(3)
-            val MRR = intervalsBeatsTime.average().roundDecimalTo(3)
-            val MxDMn = getMxDMn(intervalsBeatsTime).roundDecimalTo(3)
-            val Mode = getModeOf(intervalsBeatsTime).first.roundDecimalTo(3)
-            val AMo50 = getAMo50(intervalsBeatsTime).roundDecimalTo(0)
-            val CV = getCV(intervalsBeatsTime).roundDecimalTo(1)
-            val RMSSD = getRMSSD(intervalsBeatsTime).roundDecimalTo(3)
-            val IN = getIN(intervalsBeatsTime).roundDecimalTo(0)
+            val sdnn = intervalsBeatsTimeFiltered.standardDeviation().roundDecimalTo(3)
+            val MRR = intervalsBeatsTimeFiltered.average().roundDecimalTo(3)
+            val MxDMn = getMxDMn(intervalsBeatsTimeFiltered).roundDecimalTo(3)
+            val Mode = getModeOf(intervalsBeatsTimeFiltered).first.roundDecimalTo(3)
+            val AMo50 = getAMo50(intervalsBeatsTimeFiltered).roundDecimalTo(0)
+            val CV = getCV(intervalsBeatsTimeFiltered).roundDecimalTo(1)
+            val RMSSD = getRMSSD(intervalsBeatsTimeFiltered).roundDecimalTo(3)
+            val IN = getIN(intervalsBeatsTimeFiltered).roundDecimalTo(0)
 
-            println(SDNN_VALUE)
+            println(sdnn)
             println(MRR)
             println(MxDMn)
             println(Mode)
@@ -211,79 +215,29 @@ class HRVMeasureViewModel(application: Application, private val sharedPreference
             println(CV)
             println(RMSSD)
 
-
-            val values = listOf(
-                HRVParam(
-                    (SDNN_VALUE * 1000),
-                    Constants.SDNN.NAME,
-                    "мс",
-                    30.0,
-                    96.0,
-                    application.resources.getString(R.string.sdnn_info)
-                ),
-                HRVParam(
-                    MRR * 1000,
-                    "MRR",
-                    "мс",
-                    660.0,
-                    1370.0,
-                    application.resources.getString(R.string.mrr_info)
-                ),
-                HRVParam(
-                    MxDMn * 1000,
-                    "MxDMn",
-                    "мс",
-                    120.0,
-                    450.0,
-                    application.resources.getString(R.string.mxdmn_info)
-                ),
-                HRVParam(
-                    Mode * 1000,
-                    "Mo",
-                    "мс",
-                    660.0,
-                    1370.0,
-                    application.resources.getString(R.string.mode_info)
-                ),
-                HRVParam(
-                    RMSSD * 1000,
-                    "RMSSD",
-                    "мс",
-                    15.0,
-                    90.0,
-                    application.resources.getString(R.string.rmssd_info)
-                ),
-                HRVParam(
-                    AMo50,
-                    "AMo50",
-                    "%",
-                    26.0,
-                    50.0,
-                    application.resources.getString(R.string.amo50_info)
-                ),
-                HRVParam(
-                    CV,
-                    "CV",
-                    "%",
-                    5.1,
-                    8.3,
-                    application.resources.getString(R.string.cv_info)
-                ),
-                HRVParam(
-                    IN,
-                    "IN",
-                    application.resources.getString(R.string.in_dimension),
-                    30.0,
-                    140.0,
-                   application.resources.getString(R.string.in_info)
-                )
+            val id = measureRepo.getIdForCollection("measure")
+            measure = Measure(
+                id = id,
+                timeCreated = System.currentTimeMillis(),
+                sdnn = sdnn*1000,
+                mrr = MRR*1000,
+                mxdmn = MxDMn*1000,
+                mode = Mode*1000,
+                amo50 = AMo50,
+                cv = CV,
+                rmssd = RMSSD*1000,
+                stressIndex = IN
             )
 
-            for(param in values) intent.putExtra(param.name, param)
+            val email = auth.currentUser!!.email!!
+
+            CoroutineScope(Dispatchers.IO).launch {
+                result.postValue(measureRepo.addMeasure(email, id, measure))
+            }
 
             isMeasureFinished.value = true
-
         }
+
         processing.set(false)
     }
 

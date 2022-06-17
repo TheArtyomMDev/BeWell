@@ -73,10 +73,9 @@
                         android:layout_alignParentEnd="true"
                         android:layout_marginTop="@dimen/list_item_vertical_padding"
                         android:background="@drawable/rectangle"
-                        android:backgroundTint="@{(param.value >= param.minValue &amp;&amp; param.value &lt;= param.maxValue)? @color/soft_green : @color/soft_red}"
                         android:paddingLeft="5dp"
                         android:paddingRight="5dp"
-                        android:text="@{Double.toString(param.value) + ` ` + param.dimension}"
+                        android:text="1000"
                         android:textSize="25sp" />
 
                     <TextView
@@ -117,7 +116,7 @@
                             android:id="@+id/description_text"
                             android:layout_width="fill_parent"
                             android:layout_height="wrap_content"
-                            android:text="@{param.description}" />
+                            android:text="@{param.info}" />
                     </LinearLayout>
                 </RelativeLayout>
 

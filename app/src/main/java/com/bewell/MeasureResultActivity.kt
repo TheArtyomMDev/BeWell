@@ -1,23 +1,21 @@
 package com.bewell
 
 import android.os.Bundle
-import androidx.activity.viewModels
+import android.util.Log
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.bewell.databinding.ActivityResultBinding
-import com.bewell.data.HRVParam
-import com.bewell.viewmodels.MeasureResultViewModel
 import com.bewell.adapters.ResultRecyclerAdapter
-import com.google.firebase.firestore.FirebaseFirestore
+import com.bewell.databinding.ActivityResultBinding
+import com.bewell.utils.Constants
+import com.bewell.viewmodels.MeasureResultViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import org.koin.android.ext.android.inject
 
 class MeasureResultActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityResultBinding
     private val vm by viewModel<MeasureResultViewModel>()
-    private var params = mutableListOf<HRVParam>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,23 +23,18 @@ class MeasureResultActivity : AppCompatActivity() {
         val view = binding.root
         setContentView(view)
 
-        fetchParams()
+        vm.intent = intent
         setupRecyclerView(binding.resultsRecyclerView)
-        vm.params = params
-        vm.uploadMeasureInfo()
     }
 
-    private fun fetchParams() {
-        for (key in intent.extras!!.keySet()) {
-            params.add(intent.getSerializableExtra(key) as HRVParam)
-        }
-    }
 
     private fun setupRecyclerView(resultsRecyclerView: RecyclerView) {
         val myAdapter = ResultRecyclerAdapter(this)
+        myAdapter.measure = vm.measure
+        myAdapter.params = vm.params
+
         resultsRecyclerView.layoutManager = LinearLayoutManager(this)
         resultsRecyclerView.adapter = myAdapter
-
-        myAdapter.params = params
     }
+
 }

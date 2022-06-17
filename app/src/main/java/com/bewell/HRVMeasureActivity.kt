@@ -2,28 +2,24 @@ package com.bewell
 
 import android.app.Activity
 import android.content.Intent
-import android.content.SharedPreferences
 import android.os.Bundle
 import android.os.PowerManager
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
-import com.bewell.databinding.MainBinding
+import com.bewell.databinding.ActivityHrvMeasureBinding
 import com.bewell.utils.Constants
 import com.bewell.viewmodels.HRVMeasureViewModel
-import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import org.koin.core.context.GlobalContext.get
-
 
 class HRVMeasureActivity : AppCompatActivity() {
 
-    private lateinit var binding: MainBinding
+    private lateinit var binding: ActivityHrvMeasureBinding
     private val vm by viewModel<HRVMeasureViewModel>()
     private lateinit var wakeLock: PowerManager.WakeLock
 
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = MainBinding.inflate(layoutInflater)
+        binding = ActivityHrvMeasureBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
 
@@ -35,15 +31,17 @@ class HRVMeasureActivity : AppCompatActivity() {
         vm.bpmText.observe(this) { text ->
             binding.bpm.text = text
         }
-        vm.isMeasureFinished.observe(this) { isMeasureFinished ->
-            if(isMeasureFinished) {
+        vm.isMeasureFinished.observe(this) { result ->
+            if (result) {
+                mIntent.putExtra("measure", vm.measure)
                 startActivity(mIntent)
                 this.finish()
             }
         }
 
         val pm = getSystemService(Activity.POWER_SERVICE) as PowerManager
-        wakeLock = pm.newWakeLock(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON, Constants.WAKELOCK_TAG)
+        wakeLock =
+            pm.newWakeLock(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON, Constants.WAKELOCK_TAG)
         binding.preview.holder.addCallback(vm.surfaceCallback)
     }
 

@@ -1,11 +1,11 @@
 package com.bewell.utils
 
 import org.nield.kotlinstatistics.standardDeviation
-import java.math.RoundingMode
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.math.pow
-import kotlin.math.roundToInt
+import org.apache.commons.math3.distribution.TDistribution
+import kotlin.math.abs
 import kotlin.math.sqrt
 
 object Math {
@@ -36,9 +36,9 @@ object Math {
     }
 
     fun getCV(array: Array<Double>): Double {
-        val SDNN = array.standardDeviation()
-        val MRR = array.average()
-        return (SDNN/MRR) * 100
+        val sdnn = array.standardDeviation()
+        val mrr = array.average()
+        return (sdnn/mrr) * 100
     }
 
     fun getRMSSD(array: Array<Double>): Double {
@@ -66,5 +66,24 @@ object Math {
             if (toAdd < 1.2 && toAdd > 0.6) retArray.add(toAdd)
         }
         return retArray.toTypedArray()
+    }
+
+    fun filterArray(array: Array<Double>, confidenceInterval: Double): Array<Double> {
+        var t = TDistribution(array.size.toDouble()).inverseCumulativeProbability(confidenceInterval)
+        var average = array.average()
+        var stdev = array.standardDeviation()
+        var ret = mutableListOf<Double>()
+
+        for(elem in array) println(elem)
+        println("Array size: ${array.size}, confidenceInterval: $confidenceInterval, t: $t")
+        println("Average: $average, standardDeviation: $stdev")
+
+        for(elem in array) {
+            var control = abs(elem - average) / stdev
+            println("$elem | $control | ${if(control > t) "deleted" else ""}")
+            if(control <= t) ret.add(elem)
+        }
+
+        return ret.toTypedArray()
     }
 }

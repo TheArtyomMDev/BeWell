@@ -1,13 +1,18 @@
 package com.bewell.data
 
-import java.io.Serializable
+import androidx.room.Entity
+import androidx.room.Index
+import androidx.room.PrimaryKey
 
+@Entity(tableName = "hrvparams")
 data class HRVParam(
-    var value: Double,
+    @PrimaryKey
+    var id: String,
+
     var name: String,
     val dimension: String,
     val minValue: Double,
     val maxValue: Double,
-    val description: String
-    ) : Serializable
+    val info: String
+)
 

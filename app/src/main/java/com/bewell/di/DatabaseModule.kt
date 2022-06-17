@@ -2,12 +2,13 @@ package com.bewell.di
 
 import android.content.Context
 import android.content.SharedPreferences
+import androidx.room.Room
+import com.bewell.storage.AppDatabase
+import com.bewell.storage.repository.MeasureRepository
 import com.bewell.storage.Preferences
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
-import com.google.firebase.ktx.app
+import com.bewell.storage.repository.HRVParamRepository
 import org.koin.dsl.module
+
 
 val databaseModule = module {
 
@@ -15,8 +16,27 @@ val databaseModule = module {
         return context.getSharedPreferences(Preferences.FILE_NAME, Context.MODE_PRIVATE)
     }
 
+    fun provideHRVParamsDatabase(context: Context): AppDatabase {
+        return Room.databaseBuilder(context, AppDatabase::class.java, "database")
+            .createFromAsset("databases/database.db")
+            .allowMainThreadQueries()
+            .build()
+    }
+
     single {
         provideSharedPreferences(get())
+    }
+
+    single {
+        provideHRVParamsDatabase(get())
+    }
+
+    single {
+        MeasureRepository(get())
+    }
+
+    single {
+        HRVParamRepository(get())
     }
 
 }

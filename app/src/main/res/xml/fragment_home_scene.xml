@@ -10,19 +10,14 @@
        <KeyFrameSet>
            <KeyAttribute
                motion:motionTarget="@+id/fab"
-               motion:framePosition="80"
-               android:alpha="0.9" />
+               motion:framePosition="12"
+               android:alpha="0.4" />
            <KeyPosition
                motion:motionTarget="@+id/fab"
-               motion:framePosition="40"
+               motion:framePosition="8"
                motion:keyPositionType="deltaRelative"
-               motion:percentX="1.0"
-               motion:percentY="1.0"/>
-           <KeyAttribute
-               motion:motionTarget="@+id/fab"
-               motion:framePosition="40"
-               android:scaleX="1"
-               android:scaleY="1"/>
+               motion:percentX="0.5"
+               motion:percentY="0.3"/>
        </KeyFrameSet>
     </Transition>
 
@@ -36,19 +31,12 @@
             motion:layout_constraintBottom_toBottomOf="parent"
             motion:layout_constraintEnd_toEndOf="parent"
 
-            motion:layout_constraintStart_toStartOf="parent"
             android:id="@+id/fab"
-            motion:layout_constraintTop_toTopOf="parent"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
 
-            android:scaleX="2"
-            android:scaleY="4" />
-        <Constraint
-            motion:layout_editor_absoluteY="0dp"
-            android:layout_height="match_parent"
-            motion:layout_editor_absoluteX="0dp"
-            android:layout_width="match_parent"
-            android:id="@+id/recyclerView" />
+            android:layout_marginBottom="140dp"
+            android:layout_marginEnd="100dp" />
+
     </ConstraintSet>
 </MotionScene>
