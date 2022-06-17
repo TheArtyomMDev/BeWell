@@ -5,9 +5,11 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.bewell.data.Measure
 import com.bewell.utils.Constants.TAG
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
 import kotlinx.coroutines.tasks.await
+import java.lang.reflect.Field
 import java.util.*
 
 class MeasureRepository(private val db: FirebaseFirestore) {
@@ -30,6 +32,17 @@ class MeasureRepository(private val db: FirebaseFirestore) {
             e.printStackTrace()
             false
         }
+    }
+
+    fun deleteMeasure(email: String, id: String) {
+        db.collection("measure")
+            .document(email)
+            .update(
+                mapOf(
+                id to FieldValue.delete()
+            )
+            )
+
     }
 
     fun getIdForCollection(collection: String): String {

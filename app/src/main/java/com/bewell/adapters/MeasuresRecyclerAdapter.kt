@@ -12,18 +12,22 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bewell.MeasureResultActivity
 import com.bewell.databinding.MeasureItemBinding
 import com.bewell.data.Measure
+import com.bewell.storage.repository.MeasureRepository
 import com.bewell.viewmodels.MeasureResultViewModel
+import java.security.PrivateKey
 
 class MeasuresRecyclerAdapter(
     val context: Context,
     lifecycle: LifecycleOwner,
-    private val measuresLD: LiveData<List<Measure>>) :
+    private val measuresLD: LiveData<List<Measure>>,
+    val deleteMeasure: (id: String) -> Unit) :
     RecyclerView.Adapter<MeasuresRecyclerAdapter.ListViewHolder>()  {
 
     var intent = Intent(context, MeasureResultActivity::class.java)
 
     init {
         measuresLD.observe(lifecycle) {
+            println("observed")
             notifyDataSetChanged()
         }
     }
@@ -42,6 +46,10 @@ class MeasuresRecyclerAdapter(
         holder.binding.cardContainer.setOnClickListener {
             intent.putExtra("measure", measuresLD.value!![position])
             context.startActivity(intent)
+        }
+        holder.binding.delete.setOnClickListener {
+            deleteMeasure(measuresLD.value!![position].id)
+            notifyDataSetChanged()
         }
     }
 

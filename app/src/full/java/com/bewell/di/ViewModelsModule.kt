@@ -30,6 +30,6 @@ var viewModelsModule = module {
     
     
     viewModel {
-        MeasuresListViewModel(get())
+        MeasuresListViewModel(get(), get())
     }
 }

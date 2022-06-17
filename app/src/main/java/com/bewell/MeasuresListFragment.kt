@@ -32,6 +32,7 @@ class MeasuresListFragment : Fragment() {
     private var chosenTimeLD = MutableLiveData<Date>().apply { value = Date() }
     private val calendar: Calendar = Calendar.getInstance()
 
+
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
@@ -48,7 +49,7 @@ class MeasuresListFragment : Fragment() {
         val context = this.context
 
         binding.measuresRecyclerView.layoutManager = LinearLayoutManager(context)
-        binding.measuresRecyclerView.adapter = MeasuresRecyclerAdapter(context!!, viewLifecycleOwner, vm.measuresLD)
+        binding.measuresRecyclerView.adapter = MeasuresRecyclerAdapter(context!!, viewLifecycleOwner, vm.measuresLD, ::deleteMeasure)
 
 
 
@@ -130,6 +131,22 @@ class MeasuresListFragment : Fragment() {
         }
 
         return root
+    }
+
+    fun deleteMeasure(id: String) {
+        vm.deleteMeasure(id)
+
+        val array = vm.measuresLD.value!!.toMutableList()
+
+        for (i in array.indices) {
+            if(array[i].id == id) {
+                println("dropped $i")
+                array.removeAt(i)
+                vm.measuresLD.value = array
+                println(vm.measuresLD.value)
+                return
+            }
+        }
     }
 
     override fun onStop() {
