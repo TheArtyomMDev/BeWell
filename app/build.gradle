@@ -8,8 +8,8 @@ android {
         applicationId "com.bewell"
         minSdkVersion 21
         targetSdkVersion 32
-        versionCode 4
-        versionName "4.0.0-alpha"
+        versionCode 5
+        versionName "5.0.0-alpha"
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
     }
 
@@ -61,6 +61,7 @@ dependencies {
     // navigation
     implementation 'androidx.navigation:navigation-fragment-ktx:2.4.2'
     implementation 'androidx.navigation:navigation-ui-ktx:2.4.2'
+
     implementation 'com.google.firebase:firebase-common-ktx:20.1.1'
     implementation 'org.apache.commons:commons-math3:3.6.1'
 
@@ -95,6 +96,9 @@ dependencies {
     def room_version = "2.4.2"
     implementation "androidx.room:room-runtime:$room_version"
     kapt "androidx.room:room-compiler:$room_version"
+
+    // time stuff
+    implementation 'org.jetbrains.kotlinx:kotlinx-datetime:0.3.3'
 }
 
 repositories {

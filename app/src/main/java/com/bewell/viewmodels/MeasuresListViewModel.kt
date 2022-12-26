@@ -15,24 +15,22 @@ import java.util.*
 
 class MeasuresListViewModel(private  val measureRepo: MeasureRepository, private val auth: FirebaseAuth) : ViewModel() {
 
-    /*
-    private val _text = MutableLiveData<String>().apply {
-        value = "This is home Fragment"
-    }
-    val text: LiveData<String> = _text
-
-     */
-
-    lateinit var result: LiveData<List<Measure>>
+    val email = auth.currentUser!!.email!!
     var measuresLD = MutableLiveData<List<Measure>>().apply { value = listOf() }
+    var isDataSynced = MutableLiveData<Boolean>().apply { value = false }
+    var chosenTimeLD = MutableLiveData<Date>().apply { value = Date() }
 
-    fun getMeasuresFromDate(date: Date, email: String) {
+    fun getMeasuresFromDate(date: Date) {
         CoroutineScope(Dispatchers.IO).launch {
             measuresLD.postValue(measureRepo.getMeasuresFromDate(date, email))
         }
     }
 
     fun deleteMeasure(id: String) {
-        measureRepo.deleteMeasure(auth.currentUser!!.email!!, id)
+        measureRepo.deleteMeasure(email, id)
+    }
+
+    init {
+        measureRepo.setSnapshotListener(::getMeasuresFromDate, chosenTimeLD, auth.currentUser!!.email!!, isDataSynced)
     }
 }

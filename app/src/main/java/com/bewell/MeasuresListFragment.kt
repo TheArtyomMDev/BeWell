@@ -1,6 +1,7 @@
 package com.bewell
 
 import android.content.Intent
+import android.graphics.PorterDuff
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -26,12 +27,8 @@ class MeasuresListFragment : Fragment() {
 
     private var _binding: FragmentHomeBinding? = null
     private val vm by viewModel<MeasuresListViewModel>()
-    private val auth: FirebaseAuth by inject()
     private var started = false
-    private val email = auth.currentUser!!.email!!
-    private var chosenTimeLD = MutableLiveData<Date>().apply { value = Date() }
     private val calendar: Calendar = Calendar.getInstance()
-
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -39,10 +36,7 @@ class MeasuresListFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
 
-        if(savedInstanceState != null) {
-            vm.measuresLD.value = savedInstanceState.getSerializable("measures") as List<Measure>
-            chosenTimeLD.value = savedInstanceState.getSerializable("choosedTime") as Date
-        }
+        // restoring if going back
 
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         val root: View = binding.root
@@ -51,20 +45,26 @@ class MeasuresListFragment : Fragment() {
         binding.measuresRecyclerView.layoutManager = LinearLayoutManager(context)
         binding.measuresRecyclerView.adapter = MeasuresRecyclerAdapter(context!!, viewLifecycleOwner, vm.measuresLD, ::deleteMeasure)
 
-
-
-        chosenTimeLD.observe(viewLifecycleOwner) { time ->
+        vm.chosenTimeLD.observe(viewLifecycleOwner) { time ->
             calendar.time = time
             binding.datePickerText.text =
                 "${calendar[Calendar.DATE]}.${calendar[Calendar.MONTH] + 1}.${calendar[Calendar.YEAR]}"
 
             println("Time changed to $time")
-            vm.getMeasuresFromDate(time, email)
+            vm.getMeasuresFromDate(time)
         }
 
         vm.measuresLD.observe(viewLifecycleOwner) {
             println("got new measures")
-            println(it)
+            //println(it)
+        }
+
+        vm.isDataSynced.observe(viewLifecycleOwner) { isDataSynced ->
+            val resource = when(isDataSynced) {
+                true -> R.drawable.ic_synced
+                false -> R.drawable.ic_not_synced
+            }
+            binding.isSyncedImage.setImageResource(resource)
         }
 
         binding.motionContainer.setTransitionListener(
@@ -122,12 +122,10 @@ class MeasuresListFragment : Fragment() {
 
             datePicker.addOnPositiveButtonClickListener {
                 println("date picked")
-                chosenTimeLD.value = Date(it)
+                vm.chosenTimeLD.value = Date(it)
             }
 
             datePicker.show(supportFragmentManager, "tag")
-
-
         }
 
         return root
@@ -136,6 +134,7 @@ class MeasuresListFragment : Fragment() {
     fun deleteMeasure(id: String) {
         vm.deleteMeasure(id)
 
+        /*
         val array = vm.measuresLD.value!!.toMutableList()
 
         for (i in array.indices) {
@@ -143,10 +142,12 @@ class MeasuresListFragment : Fragment() {
                 println("dropped $i")
                 array.removeAt(i)
                 vm.measuresLD.value = array
-                println(vm.measuresLD.value)
+                //println(vm.measuresLD.value)
                 return
             }
         }
+
+         */
     }
 
     override fun onStop() {
@@ -157,7 +158,17 @@ class MeasuresListFragment : Fragment() {
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putSerializable("measures", vm.measuresLD.value as Serializable)
-        outState.putSerializable("choosedTime", chosenTimeLD.value)
+        outState.putSerializable("choosedTime", vm.chosenTimeLD.value)
+    }
+
+    override fun onViewStateRestored(savedInstanceState: Bundle?) {
+        super.onViewStateRestored(savedInstanceState)
+        if(savedInstanceState != null) {
+            println("restored")
+            vm.measuresLD.value = savedInstanceState.getSerializable("measures") as List<Measure>
+            vm.chosenTimeLD.value = savedInstanceState.getSerializable("choosedTime") as Date
+        }
+
     }
 
     override fun onDestroyView() {

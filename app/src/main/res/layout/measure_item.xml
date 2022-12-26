@@ -85,8 +85,11 @@
                         android:layout_alignTop="@+id/arrow"
                         android:layout_alignBottom="@+id/arrow"
                         android:layout_toStartOf="@+id/arrow"
-                        app:srcCompat="@drawable/ic_delete"
-                        android:paddingEnd="16dp"/>
+                        android:gravity="center"
+                        android:minHeight="48dp"
+                        android:paddingEnd="16dp"
+                        android:src="@drawable/ic_delete"
+                        app:tint="?attr/colorPrimary" />
 
                 </RelativeLayout>
 

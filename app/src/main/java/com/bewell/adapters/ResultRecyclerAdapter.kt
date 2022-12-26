@@ -83,11 +83,13 @@ class ResultRecyclerAdapter(val context: Context) : RecyclerView.Adapter<ResultR
     }
 
     override fun onBindViewHolder(holder: ListViewHolder, position: Int) {
+        try {
         val model = adapterList[position]
         val param = params[position]
 
-        println(measure)
-        println(param.id)
+        //println(measure)
+        //println(param.id)
+
         val valueField = measure.javaClass.getDeclaredField(param.id)
         valueField.isAccessible = true
         val value = valueField.get(measure) as Double
@@ -145,7 +147,9 @@ class ResultRecyclerAdapter(val context: Context) : RecyclerView.Adapter<ResultR
                 expandItem(holder, expand = true, animate = true)
                 expandedModel = model
             }
+        }
 
+        } catch (e: Exception) {
 
         }
     }

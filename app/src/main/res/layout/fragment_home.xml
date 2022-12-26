@@ -54,19 +54,31 @@
             android:animateLayoutChanges="true"
             app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
 
-            <TextView
-                android:id="@+id/datePickerText"
-                android:layout_width="fill_parent"
+            <LinearLayout
+                android:id="@+id/second_bar_layout"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingStart="16dp"
-                android:paddingBottom="32dp"
-                android:text="17.06.2022"
-                android:textSize="50dp"
-
-                android:layout_centerHorizontal="true"
-                app:layout_constraintEnd_toEndOf="parent"
+                android:orientation="horizontal"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent">
+
+                <TextView
+                    android:id="@+id/date_picker_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:padding="16dp"
+                    android:text="17.06.2022"
+                    android:textSize="50sp" />
+
+                <ImageView
+                    android:id="@+id/is_synced_image"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    app:srcCompat="@drawable/ic_not_synced"
+                    android:layout_margin="16dp"
+                    app:tint="?attr/colorPrimary" />
+            </LinearLayout>
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/measures_recycler_view"
@@ -80,7 +92,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
 
-                app:layout_constraintTop_toBottomOf="@+id/datePickerText"
+                app:layout_constraintTop_toBottomOf="@+id/second_bar_layout"
                 tools:listitem="@layout/measure_item" />
 
 

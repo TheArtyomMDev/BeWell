@@ -215,7 +215,7 @@ class HRVMeasureViewModel(application: Application,
             println(CV)
             println(RMSSD)
 
-            val id = measureRepo.getIdForCollection("measure")
+            val id = measureRepo.getId()
             measure = Measure(
                 id = id,
                 timeCreated = System.currentTimeMillis(),

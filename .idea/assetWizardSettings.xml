@@ -24,7 +24,7 @@
                                             <option name="values">
                                               <map>
                                                 <entry key="color" value="000000" />
-                                                <entry key="imagePath" value="C:\Users\artyo\AppData\Local\Temp\baseline_delete_24.xml" />
+                                                <entry key="imagePath" value="C:\Users\artyo\AppData\Local\Temp\round_account_circle_24.xml" />
                                                 <entry key="opacityPercent" value="60" />
                                               </map>
                                             </option>
@@ -36,7 +36,7 @@
                                           <PersistentState>
                                             <option name="values">
                                               <map>
-                                                <entry key="url" value="file:/$USER_HOME$/AppData/Local/Android/Sdk/icons/material/materialicons/delete/baseline_delete_24.xml" />
+                                                <entry key="url" value="file:/$USER_HOME$/AppData/Local/Android/Sdk/icons/material/materialiconsround/account_circle/round_account_circle_24.xml" />
                                               </map>
                                             </option>
                                           </PersistentState>
@@ -68,7 +68,7 @@
                                   </option>
                                   <option name="values">
                                     <map>
-                                      <entry key="outputName" value="ic_delete" />
+                                      <entry key="outputName" value="ic_account_image" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -183,7 +183,18 @@
                                             <option name="values">
                                               <map>
                                                 <entry key="color" value="000000" />
-                                                <entry key="imagePath" value="C:\Users\artyo\AppData\Local\Temp\ic_android_black_24dp.xml" />
+                                                <entry key="imagePath" value="C:\Users\artyo\AppData\Local\Temp\baseline_delete_24.xml" />
+                                              </map>
+                                            </option>
+                                          </PersistentState>
+                                        </value>
+                                      </entry>
+                                      <entry key="clipartAsset">
+                                        <value>
+                                          <PersistentState>
+                                            <option name="values">
+                                              <map>
+                                                <entry key="url" value="file:/$USER_HOME$/AppData/Local/Android/Sdk/icons/material/materialicons/delete/baseline_delete_24.xml" />
                                               </map>
                                             </option>
                                           </PersistentState>
@@ -211,6 +222,11 @@
                                           </PersistentState>
                                         </value>
                                       </entry>
+                                    </map>
+                                  </option>
+                                  <option name="values">
+                                    <map>
+                                      <entry key="outputName" value="ic_delete" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -295,7 +311,7 @@
                         </option>
                         <option name="values">
                           <map>
-                            <entry key="outputIconType" value="ACTIONBAR" />
+                            <entry key="outputIconType" value="NOTIFICATION" />
                           </map>
                         </option>
                       </PersistentState>
